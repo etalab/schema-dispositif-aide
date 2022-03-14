@@ -1,0 +1,108 @@
+{
+    "$schema":"https://specs.frictionlessdata.io/schemas/table-schema.json",
+    "name":"appel-public",
+    "title":"Appels publics",
+    "description":"Spécification du fichier d'échange relatif appels publics.",
+    "keywords":[
+       "appels",
+       "public"
+    ],
+    "countryCode":"FR",
+    "homepage":"https://github.com/etalab/schema-appel-public",
+    "path":"https://github.com/etalab/schema-appel-public/raw/v0.0.1/schema.json",
+    "image":"https://github.com/etalab/schema-appel-public/raw/v0.0.1/irve.png",
+    "licenses":[
+       {
+          "title":"Etalab Licence Ouverte 2.0",
+          "name":"etalab-2.0",
+          "path":"https://spdx.org/licenses/etalab-2.0.html"
+       }
+    ],
+    "resources":[
+       {
+          "title":"Fichier valide (CSV)",
+          "name":"exemple-valide-csv",
+          "path":"https://github.com/mon-orga/schema-objets-importants/raw/v0.1.1/exemple-valide.csv"
+       }
+    ],
+    "sources":[],
+    "created":"2022-03-14",
+    "lastModified":"2022-03-14",
+    "version":"0.0.1",
+    "contributors":[
+       {
+          "title":"Geoffrey Aldebert",
+          "email":"geoffrey.aldebert@data.gouv.fr",
+          "organisation":"Etalab",
+          "role":"author"
+       },
+       {
+          "title":"Sixte De Maupeou",
+          "email":"sixte.de-maupeou@data.gouv.fr",
+          "organisation":"Etalab",
+          "role":"contributor"
+       },
+       {
+          "title":"Jean-Baptiste Ledevehat",
+          "email":"Jean-Baptiste.LEDEVEHAT@ademe.fr",
+          "organisation":"ADEME",
+          "role":"contributor"
+       },
+       {
+          "title":"Cedric Merouani",
+          "email":"cedric.merouani@developpement-durable.gouv.fr",
+          "organisation":"CGDD",
+          "role":"contributor"
+       },
+       {
+          "title":"Marie Ramon-Dare",
+          "email":"marie.ramon-dare@developpement-durable.gouv.fr",
+          "organisation":"CGDD",
+          "role":"contributor"
+       },
+       {
+          "title":"Elise Marion",
+          "email":"elise.marion@developpement-durable.gouv.fr",
+          "organisation":"CGDD",
+          "role":"contributor"
+       },
+       {
+          "title":"Laurent Morice",
+          "email":"laurent.morice@ademe.fr",
+          "organisation":"Ademe",
+          "role":"contributor"
+       },
+       {
+          "title":"Thierry Verrechhia",
+          "email":"thierry.verrecchia@beta.gouv.fr",
+          "organisation":"beta.gouv",
+          "role":"contributor"
+       },
+       {
+          "title":"Benoit Delamea",
+          "email":"benoit.delamea@capgemini.com",
+          "organisation":"Cap Gemini",
+          "role":"contributor"
+       }
+    ],
+    "fields":[
+        {
+            "name":"id_aide",
+            "description":"ID de l'aide. Identifiant local de l'aide du porteur (unique pour le porteur). Si vous ne disposez pas d'un identifiant, vous pouvez en générer un sur https://heidi.app.etalab.studio/",
+            "example":"65d5b6c7-102c-4440-ac3b-768f708edc0a",
+            "type":"string",
+            "constraints":{
+               "required":true
+            }
+         },
+         {
+             "name":"nom_aide",
+             "description":"Nom de l'aide. Nom d'origine de l'aide par le porteur",
+             "example":"Soutenir et expérimenter des initiatives de transition citoyenne d’intérêt collectif",
+             "type":"string",
+             "constraints":{
+                "required":true
+             }
+          }
+    ]
+ }
