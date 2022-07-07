@@ -128,7 +128,7 @@
          {
              "name":"porteur_siren",
              "description":"Numéro SIREN du/des porteur(s) de l'aide. S'il y a plusieurs porteurs, mettre une virgule sans espace entre les différents porteurs.",
-             "example":"Conseil départemental de la Nièvre,ADEME",
+             "example":"385290309",
              "type":"string",
              "constraints":{
                 "required":true,
