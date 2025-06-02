@@ -1,6 +1,6 @@
 # Schéma des dispositifs d'aides
 
-Ce schéma de données permet de définir un modèle permettant de spécifier les dispositifs d'aides publiques sous leurs différentes formes afin de favoriser leur diffusion vers leurs bénéficiaires.
+Ce schéma de données définit un modèle permettant de spécifier les dispositifs d'aides publiques sous leurs différentes formes afin de favoriser leur diffusion vers leurs bénéficiaires.
 
 ## Contexte
 
@@ -18,7 +18,7 @@ Les acteurs publics, créateurs de dispositifs, verront ainsi leurs dispositifs 
 
 L'utilisation d'un schéma de données partagé est également utile pour faciliter l'articulation entre dispositifs, et offrir une meilleure lisibilité aux bénéficiaires.
 
-Enfin, il pourrait être pertinent de faire un lien entre un dispositif d'aide et les [subventions associées](https://schema.data.gouv.fr/scdl/subventions/2.0.1/documentation.html) afin de connaitre les montants versés par ses dispositifs dans un usage de pilotage administratif ou d'évaluation de politique publique.
+Enfin, il pourrait être pertinent de faire un lien entre un dispositif d'aide et les [subventions associées](https://schema.data.gouv.fr/scdl/subventions/) afin de connaitre les montants versés par ses dispositifs dans un usage de pilotage administratif ou d'évaluation de politique publique.
 
 ## Format des fichiers
 
