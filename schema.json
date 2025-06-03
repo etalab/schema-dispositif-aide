@@ -105,7 +105,7 @@
     {
       "name": "nom",
       "title": "Nom de l'aide",
-      "description": "Titre court, nom commercial du dispositif. Si pas de titre commercial clairement identifé, un titre générique du type \"Dispositif { opérateur principal }\" peut être utilisé",
+      "description": "Titre court, nom commercial du dispositif. Si pas de titre commercial clairement identifé, un titre générique du type 'Dispositif { opérateur principal }' peut être utilisé",
       "example": "Accélérateur décarbonation",
       "type": "string",
       "constraints": {
@@ -115,7 +115,7 @@
     {
       "name": "promesse",
       "title": "Promesse",
-      "description": "La promesse a pour objectif de :\n- résumer le dispositif de manière claire & simple en quelques mots\n- distinguer les offres les unes des autres.\n\nFormulation :\n- 6 à 15 mots.\n- La promesse commence par un verbe à l'impératif\n- rédigée sous l'angle du bénéfice utilisateur, s'adressant à lui par le pluriel de politesse \"vous\" \"votre entreprise\" \n- pas de point à la fin de la promesse (sauf point d'exclamation)",
+      "description": "La promesse a pour objectif de : - résumer le dispositif de manière claire & simple en quelques mots - distinguer les offres les unes des autres.Formulation: - 6 à 15 mots. - La promesse commence par un verbe à l'impératif. - rédigée sous l'angle du bénéfice utilisateur, s'adressant à lui par le pluriel de politesse `vous` `votre entreprise` - pas de point à la fin de la promesse (sauf point d'exclamation)",
       "example": "Développez votre stratégie bas carbone et mettez en œuvre votre plan de transition",
       "type": "string",
       "constraints": {
@@ -126,7 +126,7 @@
     {
       "name": "description_courte",
       "title": "Description courte",
-      "description": "Description courte de l'objectif du dispositif. Qu'est-ce que l'entreprise gagne à bénéficier de cette aide ?\n\nFormulation :\n- 40 à 60 mots\n- rédigée sous l'angle du bénéfice utilisateur, s'adressant à lui par le pluriel de politesse \"vous\" \"votre entreprise\"\n- La description courte est ponctuée par un point.",
+      "description": "Description courte de l'objectif du dispositif. Qu'est-ce que l'entreprise gagne à bénéficier de cette aide ? Formulation: - 40 à 60 mots - rédigée sous l'angle du bénéfice utilisateur, s'adressant à lui par le pluriel de politesse `vous` `votre entreprise` - La description courte est ponctuée par un point.",
       "example": "L’ADEME soutient financièrement les entreprises qui souhaitent questionner leur modèle économique pour identifier un nouveau modèle compatible avec une trajectoire bas carbone. Vous serez accompagné avec la méthode ACT Pas à Pas (Assessing Low Carbon Transition), une méthode structurante, progressive et sur le long terme qui aide les entreprises à réduire significativement leurs émissions de gaz à effet de serre.",
       "type": "string",
       "constraints": {
@@ -136,7 +136,7 @@
     {
       "name": "description_longue",
       "title": "Description longue",
-      "description": "Description longue du dispositif - facultatif, texte enrichi en markdown. Elle peut être ajoutée si on juge que l'utilisateur ne dispose pas des informations suffisantes avec les seules autres informations. Elle peut être ajoutée par exemple :\n- pour définir un terme technique\n- pour détailler une loi à laquelle un dispositif fait référence\n- pour détailler les projets concernés par un financement\n\nFormulation :\n- 50 à 200 mots",
+      "description": "Description longue du dispositif - facultatif, texte enrichi en markdown. Elle peut être ajoutée si on juge que l'utilisateur ne dispose pas des informations suffisantes avec les seules autres informations. Elle peut être ajoutée par exemple : - pour définir un terme technique - pour détailler une loi à laquelle un dispositif fait référence - pour détailler les projets concernés par un financement Formulation: - 50 à 200 mots",
       "example": "L'étude ACT Pas à Pas se déroule en 12 à 18 mois selon les entreprises. Les grandes étapes de l'étude sont les suivantes :\n- Analyser la maturité initiale de l'entreprise sur des bases carbone.\nExposer les enjeux et réaliser une analyse stratégique de l’entreprise dans un contexte de transition bas carbone.\n- Déterminer une vision d’entreprise et concevoir la feuille de route du plan de transition à court, moyen et long terme.\n- Elaborer des objectifs de performance carbone et définir une stratégie.\n- Mettre en oeuvre des actions de décarbonation.",
       "type": "string"
     },
@@ -150,7 +150,7 @@
     {
       "name": "porteurs_aide",
       "title": "Porteur(s) de l'aide",
-      "description": "Porteur(s) de l'aide. S'il y a plusieurs porteurs, mettre un pipe (|) sans espace entre les différents porteurs. Le premier porteur est considérer le porteur/opérateur principal de l'aide.",
+      "description": "Porteur(s) de l'aide. S'il y a plusieurs porteurs, mettre un pipe (|) sans espace entre les différents porteurs. Le premier porteur est considéré le porteur/opérateur principal de l'aide.",
       "example": "ADEME|Région Grand Est",
       "type": "string",
       "constraints": {
@@ -159,8 +159,8 @@
     },
     {
       "name": "porteurs_siren",
-      "title": "SIREN du.es porteur.s",
-      "description": "Numéro SIREN du/des porteur(s) de l'aide. S'il y a plusieurs porteurs, mettre un pipe (|) sans espace entre les différents porteurs.",
+      "title": "SIREN du(des) porteur(s)",
+      "description": "Numéro(s) SIREN du/des porteur(s) de l'aide, s'ils en disposent. S'il y a plusieurs porteurs, mettre un pipe (|) sans espace entre les différents porteurs.",
       "example": "385290309|483790069",
       "type": "string",
       "constraints": {
@@ -170,8 +170,8 @@
     },
     {
       "name": "beneficiaires_aide",
-      "title": "Bénéficiaire.s de l'aide",
-      "description": "Liste des bénéficiaires possibles. S'il y a plusieurs bénéficiaires, mettre un pipe (|) sans espace entre les différents bénéficiaires. Bénéficiaire à sélectionner parmi la liste suivante : \"Communes\", \"EPCI à fiscalité propre\", \"Départements\", \"Régions\", \"Associations\", \"Particuliers\", \"Agriculteurs\", \"Entreprises privées\", \"Entreprises publiques locales (Sem, Spl, SemOp)\", \"Établissements publics - Services de l'État\", \"Recherche\"",
+      "title": "Bénéficiaire(s) de l'aide",
+      "description": "Liste des bénéficiaires possibles. S'il y a plusieurs bénéficiaires, mettre un pipe (|) sans espace entre les différents bénéficiaires. Bénéficiaire à sélectionner parmi la liste suivante : Communes, EPCI à fiscalité propre, Départements, Régions, Associations, Particuliers, Agriculteurs, Entreprises privées, Entreprises publiques locales (Sem, Spl, SemOp), Établissements publics - Services de l'État, Recherche",
       "example": "Communes|Départements",
       "type": "string",
       "constraints": {
@@ -181,8 +181,8 @@
     },
     {
       "name": "types_aides",
-      "title": "Type.s d'aides",
-      "description": "Liste des types d'aides possibles. Par exemple: Si aide financière : \"Subvention\", \"Prêt\", \"Avance récupérable\". Si aide en ingénierie : \"Technique\", \"Financière\", \"Administrative\"... Séparer les différents type d'aide par un pipe (|).",
+      "title": "Type(s) d'aides",
+      "description": "Liste des types d'aides possibles. Par exemple: Si aide financière : Subvention, Prêt, Avance récupérable. Si aide en ingénierie : Technique, Financière, Administrative... Séparer les différents types d'aides par un pipe (|).",
       "example": "Subvention|Autre",
       "type": "string",
       "constraints": {
@@ -207,7 +207,7 @@
       "type": "string"
     },
     {
-      "name": "projet_reference",
+      "name": "projets_reference",
       "title": "Projets de référence",
       "description": "Lien avec un ou plusieurs projets de références associés à ce dispositif. Mettre un pipe (|) sans espace entre les différents projets.",
       "example": "Bilan Ges|Réduction des emballages|Plan action dechets",
@@ -369,7 +369,7 @@
     {
       "name": "eligibilite_geographique_exclusions",
       "title": "Zones géographiques exclues de l’aide",
-      "description": "Couverture géographique exclues du dispositif d'aide. Champs à écrire en utilisant le formalisme du Code Officiel Géographique du COG : https://www.insee.fr/fr/information/5230987. Séparer chaque code COG par des pipes. Cette propriété a précédence sur les \"eligibilite_geographique\" s'il y a recouvrement.",
+      "description": "Couverture géographique exclues du dispositif d'aide. Champs à écrire en utilisant le formalisme du Code Officiel Géographique du COG : https://www.insee.fr/fr/information/5230987. Séparer chaque code COG par des pipes. Cette propriété a précédence sur les `eligibilite_geographique` s'il y a recouvrement.",
       "example": "REG-84|DEP-05 pour la région Auvergne-Rhône-Alpes et le département des Hautes-Alpes",
       "type": "string"
     },
@@ -408,14 +408,14 @@
       "name": "eligibilite_effectif_min",
       "title": "Effectif minimum pour obtenir l’aide",
       "description": "Nombre minimum de salarié pour bénéficier de l'aide. Laisser vide si non applicable.",
-      "example": "50",
+      "example": 50,
       "type": "integer"
     },
     {
       "name": "eligibilite_effectif_max",
       "title": "Effectif maximum  pour obtenir l’aide",
       "description": "Nombre maximum de salarié pour bénéficier de l'aide. Laisser vide si non applicable.",
-      "example": "499",
+      "example": 499,
       "type": "integer"
     },
     {
@@ -427,16 +427,16 @@
     },
     {
       "name": "eligibilite_existence_min",
-      "title": "Durée d’existence minimale",
+      "title": "Nombre d'années d’existence minimale",
       "description": "Nombre minimum d'année(s) d'existence de l'entreprise pour bénéficier de l'aide. Laisser vide si non applicable.",
-      "example": "2",
+      "example": 2,
       "type": "integer"
     },
     {
       "name": "eligibilite_existence_max",
-      "title": "Durée d’existence maximale",
+      "title": "Nombre d'années d’existence maximale",
       "description": "Nombre maximum d'année(s) d'existence de l'entreprise pour bénéficier de l'aide. Laisser vide si non applicable.",
-      "example": "7",
+      "example": 7,
       "type": "integer"
     },
     {
