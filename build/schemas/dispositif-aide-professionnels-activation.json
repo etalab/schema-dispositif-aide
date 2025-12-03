@@ -1,7 +1,7 @@
 {
-  "name": "dispositif-aide",
-  "title": "Dispositifs d'aides",
-  "description": "Spécification du fichier d'échange relatif aux dispositifs d'aides.",
+  "name": "dispositif-aide-professionnels-activation",
+  "title": "Dispositifs d'aides pour les professionnels (activation)",
+  "description": "Extension du schéma dispositif-aide pour la cible 'professionnels' avec les extensions d'usage : activation",
   "created": "2022-03-14T00:00:00Z",
   "lastModified": "2025-09-12T00:00:00Z",
   "version": "v0.1.0",
@@ -34,15 +34,10 @@
       "role": "contributor"
     }
   ],
-  "sources": [],
-  "keywords": [
-    "dispositifs",
-    "aide"
-  ],
   "resources": [
     {
-      "name": "dispositif-aide",
-      "title": "Dispositifs d'aides",
+      "name": "data",
+      "title": "Validation file",
       "path": "exemples/exemple-dispositif-aide-professionnels-activation.csv",
       "schema": {
         "$schema": "https://specs.frictionlessdata.io/schemas/table-schema.json",
@@ -276,11 +271,13 @@
             "example": "24",
             "type": "integer"
           }
-        ],
-        "missingValues": [
-          ""
         ]
       }
     }
+  ],
+  "sources": [],
+  "keywords": [
+    "dispositifs",
+    "aide"
   ]
 }

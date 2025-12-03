@@ -1,7 +1,7 @@
 {
-  "name": "dispositif-aide",
-  "title": "Dispositifs d'aides",
-  "description": "Spécification du fichier d'échange relatif aux dispositifs d'aides.",
+  "name": "dispositif-aide-associations-communication-pilotage",
+  "title": "Dispositifs d'aides pour les associations (communication, pilotage)",
+  "description": "Extension du schéma dispositif-aide pour la cible 'associations' avec les extensions d'usage : communication, pilotage",
   "created": "2022-03-14T00:00:00Z",
   "lastModified": "2025-09-12T00:00:00Z",
   "version": "v0.1.0",
@@ -34,15 +34,10 @@
       "role": "contributor"
     }
   ],
-  "sources": [],
-  "keywords": [
-    "dispositifs",
-    "aide"
-  ],
   "resources": [
     {
-      "name": "dispositif-aide",
-      "title": "Dispositifs d'aides",
+      "name": "data",
+      "title": "Validation file",
       "path": "exemples/exemple-dispositif-aide-associations-communication-pilotage.csv",
       "schema": {
         "$schema": "https://specs.frictionlessdata.io/schemas/table-schema.json",
@@ -284,11 +279,13 @@
             "example": "10000",
             "type": "number"
           }
-        ],
-        "missingValues": [
-          ""
         ]
       }
     }
+  ],
+  "sources": [],
+  "keywords": [
+    "dispositifs",
+    "aide"
   ]
 }

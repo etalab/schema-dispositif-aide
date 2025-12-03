@@ -34,15 +34,10 @@
       "role": "contributor"
     }
   ],
-  "sources": [],
-  "keywords": [
-    "dispositifs",
-    "aide"
-  ],
   "resources": [
     {
-      "name": "dispositif-aide",
-      "title": "Dispositifs d'aides",
+      "name": "data",
+      "title": "Validation file",
       "path": "exemples/exemple-dispositif-aide.csv",
       "schema": {
         "$schema": "https://specs.frictionlessdata.io/schemas/table-schema.json",
@@ -192,11 +187,13 @@
               "required": true
             }
           }
-        ],
-        "missingValues": [
-          ""
         ]
       }
     }
+  ],
+  "sources": [],
+  "keywords": [
+    "dispositifs",
+    "aide"
   ]
 }

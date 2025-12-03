@@ -56,26 +56,54 @@ class SchemaBuilder:
         return "-".join(parts)
 
     def to_datapackage(self, table_schema: Dict, schema_name: str = None) -> Dict:
-        """Convert a table schema to a Frictionless datapackage."""
-        resource = {
-            "name": table_schema.get("name", "dispositif-aide"),
-            "title": table_schema.get("title", "Dispositifs d'aides"),
-            "path": (
-                f"exemples/exemple-{schema_name}.csv"
-                if schema_name
-                else "exemple-complet.csv"
-            ),
-            "schema": {
-                "$schema": "https://specs.frictionlessdata.io/schemas/table-schema.json",
-                "fields": table_schema.get("fields", []),
-                "missingValues": [""],
-            },
-        }
+        """Convert a table schema to a Frictionless data package."""
+        # Build title and description based on schema_name variants
+        title = "Dispositifs d'aides"
+        description = table_schema.get("description", "")
 
+        if schema_name and schema_name != "dispositif-aide":
+            # Extract cible and usage from schema_name
+            parts = schema_name.replace("dispositif-aide-", "").split("-")
+            cible_part = None
+            usage_parts = []
+
+            # Check if first part is a known cible
+            known_cibles = [
+                "associations",
+                "particuliers",
+                "professionnels",
+                "secteur-public",
+            ]
+            if parts and parts[0] in known_cibles:
+                cible_part = parts[0]
+                usage_parts = parts[1:]
+            else:
+                usage_parts = parts
+
+            # Build descriptive title
+            title_parts = ["Dispositifs d'aides"]
+            if cible_part:
+                title_parts.append(f"pour les {cible_part}")
+            if usage_parts:
+                title_parts.append(f"({', '.join(usage_parts)})")
+            title = " ".join(title_parts)
+
+            # Build descriptive description
+            if cible_part or usage_parts:
+                description_parts = ["Extension du schéma dispositif-aide"]
+                if cible_part:
+                    description_parts.append(f"pour la cible '{cible_part}'")
+                if usage_parts:
+                    description_parts.append(
+                        f"avec les extensions d'usage : {', '.join(usage_parts)}"
+                    )
+                description = " ".join(description_parts)
+
+        # Build data package with schema in resource
         datapackage = {
-            "name": table_schema.get("name", "dispositif-aide"),
-            "title": table_schema.get("title", "Dispositifs d'aides"),
-            "description": table_schema.get("description", ""),
+            "name": schema_name or "dispositif-aide",
+            "title": title,
+            "description": description,
             "created": table_schema.get("created"),
             "lastModified": table_schema.get("lastModified"),
             "version": table_schema.get("version"),
@@ -85,7 +113,21 @@ class SchemaBuilder:
             "contributors": table_schema.get("contributors", []),
             "sources": table_schema.get("sources", []),
             "keywords": table_schema.get("keywords", []),
-            "resources": [resource],
+            "resources": [
+                {
+                    "name": "validation_file",
+                    "title": "Validation file",
+                    "path": (
+                        f"exemples/exemple-{schema_name}.csv"
+                        if schema_name
+                        else "exemple-complet.csv"
+                    ),
+                    "schema": {
+                        "$schema": "https://specs.frictionlessdata.io/schemas/table-schema.json",
+                        "fields": table_schema.get("fields", []),
+                    },
+                }
+            ],
         }
         return datapackage
 

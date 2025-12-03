@@ -1,7 +1,7 @@
 {
-  "name": "dispositif-aide",
-  "title": "Dispositifs d'aides",
-  "description": "Spécification du fichier d'échange relatif aux dispositifs d'aides.",
+  "name": "dispositif-aide-particuliers-pilotage",
+  "title": "Dispositifs d'aides pour les particuliers (pilotage)",
+  "description": "Extension du schéma dispositif-aide pour la cible 'particuliers' avec les extensions d'usage : pilotage",
   "created": "2022-03-14T00:00:00Z",
   "lastModified": "2025-09-12T00:00:00Z",
   "version": "v0.1.0",
@@ -34,15 +34,10 @@
       "role": "contributor"
     }
   ],
-  "sources": [],
-  "keywords": [
-    "dispositifs",
-    "aide"
-  ],
   "resources": [
     {
-      "name": "dispositif-aide",
-      "title": "Dispositifs d'aides",
+      "name": "data",
+      "title": "Validation file",
       "path": "exemples/exemple-dispositif-aide-particuliers-pilotage.csv",
       "schema": {
         "$schema": "https://specs.frictionlessdata.io/schemas/table-schema.json",
@@ -255,11 +250,13 @@
             "example": "Résident français depuis 2 ans minimum",
             "type": "string"
           }
-        ],
-        "missingValues": [
-          ""
         ]
       }
     }
+  ],
+  "sources": [],
+  "keywords": [
+    "dispositifs",
+    "aide"
   ]
 }
