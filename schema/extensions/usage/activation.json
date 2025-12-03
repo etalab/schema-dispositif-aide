@@ -1,0 +1,28 @@
+{
+  "name": "activation",
+  "title": "Activation Extension",
+  "description": "Extension for activation and deployment of aid devices",
+  "fields": [
+    {
+      "name": "phase_deployment",
+      "title": "Phase de déploiement",
+      "description": "Phase actuelle du déploiement du dispositif",
+      "example": "conception|pilotage|deploiement|cloture",
+      "type": "string"
+    },
+    {
+      "name": "nombre_beneficiaires_vises",
+      "title": "Nombre de bénéficiaires visés",
+      "description": "Nombre estimé de bénéficiaires potentiels",
+      "example": "500",
+      "type": "integer"
+    },
+    {
+      "name": "conditions_activation",
+      "title": "Conditions d'activation",
+      "description": "Conditions nécessaires pour l'activation du dispositif",
+      "example": "Approbation budget|Signature conventions",
+      "type": "string"
+    }
+  ]
+}
