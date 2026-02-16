@@ -198,27 +198,6 @@
             "description": "Budget total alloué au dispositif en euros",
             "example": "1000000",
             "type": "number"
-          },
-          {
-            "name": "taux_cofinancement",
-            "title": "Taux de cofinancement",
-            "description": "Taux de cofinancement requis en pourcentage",
-            "example": "30",
-            "type": "number"
-          },
-          {
-            "name": "indicateurs_suivi",
-            "title": "Indicateurs de suivi",
-            "description": "Indicateurs utilisés pour le suivi du dispositif",
-            "example": "nombre_beneficiaires|montant_verses|taux_reussite",
-            "type": "string"
-          },
-          {
-            "name": "date_evaluation_prevue",
-            "title": "Date d'évaluation prévue",
-            "description": "Date prévue pour l'évaluation du dispositif",
-            "example": "2026-12-31",
-            "type": "date"
           }
         ]
       }
