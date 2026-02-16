@@ -34,9 +34,14 @@
       "role": "contributor"
     }
   ],
+  "sources": [],
+  "keywords": [
+    "dispositifs",
+    "aide"
+  ],
   "resources": [
     {
-      "name": "data",
+      "name": "validation_file",
       "title": "Validation file",
       "path": "exemples/exemple-dispositif-aide-professionnels-activation-pilotage.csv",
       "schema": {
@@ -302,10 +307,5 @@
         ]
       }
     }
-  ],
-  "sources": [],
-  "keywords": [
-    "dispositifs",
-    "aide"
   ]
 }
