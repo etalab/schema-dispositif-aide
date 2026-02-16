@@ -1,3 +1,40 @@
+# Guide d'utilisation
+
+## Workflow automatisé
+
+**GitHub Actions génère et valide automatiquement les schémas** lors des modifications dans `schema/`.
+
+- Sur push : Les schémas sont générés, validés et commitées automatiquement
+- Sur pull request : Un commentaire est ajouté si des changements sont nécessaires
+
+Vous n'avez qu'à modifier les fichiers sources dans `schema/core/` et `schema/extensions/`.
+
+## Modifier un schéma
+
+1. Ouvrir le fichier JSON concerné (core ou extension), ex: `schema/extensions/{category}/{name}.json`
+2. Ajouter un champ dans le tableau `fields` :
+
+```json
+{
+  "name": "nom_du_champ",
+  "title": "Titre du champ",
+  "description": "Description",
+  "type": "string",
+  "example": "valeur d'exemple"
+}
+```
+
+3. Commit et push - GitHub Actions régénère et valide automatiquement les schémas
+
+## Ajouter une extension (cible ou usage)
+
+Le repo génère automatiquement toutes les combinaisons d'usages pour chaque cible.
+
+Pour ajouter une nouvelle cible ou un nouvel usage :
+1. Créer un fichier JSON dans `schema/extensions/cible/` ou `schema/extensions/usage/`
+2. Suivre le format des fichiers existants
+3. Commit et push - les schémas combinés sont générés automatiquement 
+
 # Development Guide
 
 ## Quick Setup
@@ -8,12 +45,21 @@ python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 
-# Generate schemas and example files
-python3 scripts/build_schemas.py
+# Generate schemas and example files (optional - automated via GitHub Actions)
+python3 src/build_schemas.py
 
-# Validate
-python3 scripts/validate_schemas.py
+# Validate (optional - automated via GitHub Actions)
+python3 src/validate_schemas.py
 ```
+
+## Automated Workflow
+
+**GitHub Actions automatically builds and validates schemas** when you push changes to the `schema/` directory.
+
+- On push to main branches: Schemas are built, validated, and auto-committed if changes are detected
+- On pull requests: A comment is added if generated schemas need updating
+
+This means you only need to update the source schema files in `schema/core/` and `schema/extensions/`. The rest is handled automatically.
 
 ## Architecture
 
@@ -55,8 +101,8 @@ schema/
 }
 ```
 
-3. Regenerate: `python3 scripts/build_schemas.py`
-4. Test: `python3 scripts/validate_schemas.py`
+3. Commit and push - GitHub Actions will automatically regenerate and validate schemas
+4. (Optional) Test locally: `python3 src/build_schemas.py && python3 src/validate_schemas.py`
 
 ### Create an Extension
 
@@ -102,47 +148,6 @@ frictionless validate data.csv --schema build/schemas/dispositif-aide.json
 # Validate all schemas
 python3 scripts/validate_schemas.py
 ```
-
-## Generated Schemas
-
-**Core:**
-
-- `dispositif-aide.json`
-
-**Usage only:**
-
-- `dispositif-aide-{communication,pilotage,activation}.json`
-
-**Target only:**
-
-- `dispositif-aide-{associations,particuliers,...}.json`
-
-**Combined:**
-
-- `dispositif-aide-{target}-{usage}.json`
-- `dispositif-aide-{target}-{usage1}-{usage2}.json`
-
-Each target is independent of the others.
-Multiple usages can be combined with each target.
-
-## Supported Field Types
-
-- `string` - Text (default)
-- `integer` - Whole number
-- `number` - Decimal number
-- `boolean` - true/false
-- `date` - YYYY-MM-DD
-- `datetime` - ISO 8601
-- `array`, `object`, `year`, `yearmonth`, `duration`, `geopoint`, `geojson`
-
-See [Frictionless specs](https://specs.frictionlessdata.io/table-schema/) for details.
-
-## Workflow
-
-1. Modify source files in the schema directory (core or extensions)
-2. Regenerate: `python3 scripts/build_schemas.py`
-3. Validate: `python3 scripts/validate_schemas.py`
-4. Commit everything (source + generated schemas)
 
 ## References
 

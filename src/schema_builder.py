@@ -4,10 +4,10 @@ from itertools import combinations
 from pathlib import Path
 from typing import Dict, List, Tuple
 
-from src.models import BuildResult
-from src.schema_loader import SchemaLoader
-from src.schema_merger import SchemaMerger
-from src.example_generator import ExampleGenerator
+from models import BuildResult
+from schema_repository import SchemaRepository
+from schema_merger import SchemaMerger
+from schema_example_generator import ExampleGenerator
 
 
 class SchemaBuilder:
@@ -15,32 +15,33 @@ class SchemaBuilder:
 
     def __init__(self):
         self.repo_root = Path(__file__).parent.parent
-        self.loader = SchemaLoader(self.repo_root)
+        self.repository = SchemaRepository(self.repo_root)
         self.merger = SchemaMerger()
         self.example_gen = ExampleGenerator(self.repo_root)
         self.build_dir = self.repo_root / "build" / "schemas"
 
-    def get_usage_combinations(self, usage_extensions: Dict) -> List[tuple]:
+    @staticmethod
+    def get_usage_combinations(usage_extensions: Dict) -> List[tuple]:
         """Generate all combinations of usage extensions (0 or more)."""
         usage_names = list(usage_extensions.keys())
-        combos = []
+        combinations_list = []
 
         # Empty combination (no usage)
-        combos.append(())
+        combinations_list.append(())
 
         # Single usage extensions
         for name in usage_names:
-            combos.append((name,))
+            combinations_list.append((name,))
 
         # Multiple usage extensions (2 or more)
-        for r in range(2, len(usage_names) + 1):
-            for combo in combinations(usage_names, r):
-                combos.append(combo)
+        for size in range(2, len(usage_names) + 1):
+            for combination in combinations(usage_names, size):
+                combinations_list.append(combination)
 
-        return combos
+        return combinations_list
 
+    @staticmethod
     def generate_schema_name(
-        self,
         usage_names: tuple = None,
         cible_name: str = None,
     ) -> str:
@@ -55,7 +56,8 @@ class SchemaBuilder:
 
         return "-".join(parts)
 
-    def to_datapackage(self, table_schema: Dict, schema_name: str = None) -> Dict:
+    @staticmethod
+    def to_datapackage(table_schema: Dict, schema_name: str = None) -> Dict:
         """Convert a table schema to a Frictionless data package."""
         # Build title and description based on schema_name variants
         title = "Dispositifs d'aides"
@@ -134,10 +136,10 @@ class SchemaBuilder:
     def build_all_schemas(self) -> BuildResult:
         """Build all schema combinations."""
         print("Loading core schema...")
-        core_schema = self.loader.load_core_schema()
+        core_schema = self.repository.load_core_schema()
 
         print("Loading extensions...")
-        usage_extensions, cible_extensions = self.loader.load_extensions()
+        usage_extensions, cible_extensions = self.repository.load_extensions()
 
         print(
             f"Found {len(usage_extensions)} usage extensions: {list(usage_extensions.keys())}"
@@ -147,8 +149,8 @@ class SchemaBuilder:
         )
 
         # Get all usage combinations
-        usage_combos = self.get_usage_combinations(usage_extensions)
-        print(f"Will generate {len(usage_combos)} usage combinations")
+        usage_combinations = self.get_usage_combinations(usage_extensions)
+        print(f"Will generate {len(usage_combinations)} usage combinations")
 
         # Clean build directory
         self.build_dir.mkdir(parents=True, exist_ok=True)
@@ -167,7 +169,7 @@ class SchemaBuilder:
         core_schema_copy = core_schema.copy()
         core_name = self.generate_schema_name()
         datapackage = self.to_datapackage(core_schema_copy, schema_name=core_name)
-        self.loader.save_schema(datapackage, self.build_dir / f"{core_name}.json")
+        self.repository.save_schema(datapackage, self.build_dir / f"{core_name}.json")
         print(f"✓ {core_name}.json")
         generated_count += 1
 
@@ -179,17 +181,23 @@ class SchemaBuilder:
         generated_schemas[core_name] = core_schema_copy
 
         # 2. Core + usage combinations only (no cible)
-        for usage_combo in usage_combos:
-            if not usage_combo:
+        for usage_combination in usage_combinations:
+            if not usage_combination:
                 continue
 
-            usage_exts = [usage_extensions[name] for name in usage_combo]
-            combined, combo_conflicts, combo_warnings = self.merger.combine_schemas(
-                core_schema, usage_extensions=usage_exts
+            selected_usage_extensions = [
+                usage_extensions[name] for name in usage_combination
+            ]
+            combined, combination_conflicts, combination_warnings = (
+                self.merger.combine_schemas(
+                    core_schema, usage_extensions=selected_usage_extensions
+                )
             )
-            schema_name = self.generate_schema_name(usage_names=usage_combo)
+            schema_name = self.generate_schema_name(usage_names=usage_combination)
             datapackage = self.to_datapackage(combined, schema_name=schema_name)
-            self.loader.save_schema(datapackage, self.build_dir / f"{schema_name}.json")
+            self.repository.save_schema(
+                datapackage, self.build_dir / f"{schema_name}.json"
+            )
             print(f"✓ {schema_name}.json")
             generated_count += 1
 
@@ -198,28 +206,32 @@ class SchemaBuilder:
             schemas_for_csv.append((schema_name, field_names))
             generated_schemas[schema_name] = combined
 
-            conflicts.extend(combo_conflicts)
-            warnings.extend(combo_warnings)
-            if combo_conflicts:
-                self._report_conflicts(schema_name, combo_conflicts)
+            conflicts.extend(combination_conflicts)
+            warnings.extend(combination_warnings)
+            if combination_conflicts:
+                self._report_conflicts(schema_name, combination_conflicts)
 
         # 3. Each cible with all usage combinations
-        for cible_name, cible_ext in cible_extensions.items():
-            for usage_combo in usage_combos:
-                usage_exts = (
-                    [usage_extensions[name] for name in usage_combo]
-                    if usage_combo
+        for cible_name, cible_extension in cible_extensions.items():
+            for usage_combination in usage_combinations:
+                selected_usage_extensions = (
+                    [usage_extensions[name] for name in usage_combination]
+                    if usage_combination
                     else None
                 )
-                combined, combo_conflicts, combo_warnings = self.merger.combine_schemas(
-                    core_schema, usage_extensions=usage_exts, cible_extension=cible_ext
+                combined, combination_conflicts, combination_warnings = (
+                    self.merger.combine_schemas(
+                        core_schema,
+                        usage_extensions=selected_usage_extensions,
+                        cible_extension=cible_extension,
+                    )
                 )
                 schema_name = self.generate_schema_name(
-                    usage_names=usage_combo if usage_combo else None,
+                    usage_names=usage_combination if usage_combination else None,
                     cible_name=cible_name,
                 )
                 datapackage = self.to_datapackage(combined, schema_name=schema_name)
-                self.loader.save_schema(
+                self.repository.save_schema(
                     datapackage, self.build_dir / f"{schema_name}.json"
                 )
                 print(f"✓ {schema_name}.json")
@@ -230,10 +242,10 @@ class SchemaBuilder:
                 schemas_for_csv.append((schema_name, field_names))
                 generated_schemas[schema_name] = combined
 
-                conflicts.extend(combo_conflicts)
-                warnings.extend(combo_warnings)
-                if combo_conflicts:
-                    self._report_conflicts(schema_name, combo_conflicts)
+                conflicts.extend(combination_conflicts)
+                warnings.extend(combination_warnings)
+                if combination_conflicts:
+                    self._report_conflicts(schema_name, combination_conflicts)
 
         # Print summary
         self._print_summary(generated_count, conflicts, warnings)

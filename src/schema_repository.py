@@ -1,12 +1,12 @@
-"""Load and manage schema files."""
+"""Repository for schema persistence (read/write operations)."""
 
 import json
 from pathlib import Path
 from typing import Dict, Tuple
 
 
-class SchemaLoader:
-    """Loads schema and extension files."""
+class SchemaRepository:
+    """Handles loading and saving of schema and extension files."""
 
     def __init__(self, repo_root: Path):
         self.repo_root = repo_root
@@ -44,14 +44,14 @@ class SchemaLoader:
 
         usage_dir = self.extensions_dir / "usage"
         if usage_dir.exists():
-            for ext_file in sorted(usage_dir.glob("*.json")):
-                ext_data = self.load_schema(ext_file)
-                usage_extensions[ext_data["name"]] = ext_data
+            for extension_file in sorted(usage_dir.glob("*.json")):
+                extension_data = self.load_schema(extension_file)
+                usage_extensions[extension_data["name"]] = extension_data
 
         cible_dir = self.extensions_dir / "cible"
         if cible_dir.exists():
-            for ext_file in sorted(cible_dir.glob("*.json")):
-                ext_data = self.load_schema(ext_file)
-                cible_extensions[ext_data["name"]] = ext_data
+            for extension_file in sorted(cible_dir.glob("*.json")):
+                extension_data = self.load_schema(extension_file)
+                cible_extensions[extension_data["name"]] = extension_data
 
         return usage_extensions, cible_extensions

@@ -8,9 +8,7 @@ print("Validation des schémas générés...")
 schemas_dir = Path("build/schemas")
 
 if not schemas_dir.exists():
-    print(
-        "❌ Aucun schéma généré. Exécutez 'd'abord : python3 scripts/build_schemas.py'"
-    )
+    print("❌ Aucun schéma généré. Exécutez d'abord : python3 src/build_schemas.py")
     exit(1)
 
 valid = 0
@@ -32,3 +30,6 @@ for schema_file in sorted(schemas_dir.glob("*.json")):
         invalid += 1
 
 print(f"\nRésumé: {valid} valides, {invalid} invalides")
+
+if invalid > 0:
+    exit(1)
