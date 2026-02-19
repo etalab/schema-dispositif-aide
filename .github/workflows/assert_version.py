@@ -34,16 +34,12 @@ def check(obj, version, parents=""):
     return errors
 
 
+SCHEMA_CORE_PATH = "schema/core/schema-core.json"
+
 to_check = []
 
-if "schema.json" in os.listdir():
-    to_check.append("schema.json")
-
-elif "datapackage.json" in os.listdir():
-    with open("datapackage.json", "r") as f:
-        datapackage = json.load(f)
-    for resource in datapackage["resources"]:
-        to_check.append(resource["schema"])
+if os.path.isfile(SCHEMA_CORE_PATH):
+    to_check.append(SCHEMA_CORE_PATH)
 
 else:
     raise Exception("No required file found")
