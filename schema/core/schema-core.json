@@ -75,7 +75,7 @@
       "name": "promesse",
       "title": "Promesse",
       "description": "La promesse a pour objectif de : - résumer le dispositif de manière claire & simple en quelques mots - distinguer les offres les unes des autres. Formulation: - 6 à 15 mots. - La promesse commence par un verbe à l'impératif. - rédigée sous l'angle du bénéfice utilisateur, s'adressant à lui par le pluriel de politesse `vous` `votre entreprise` - pas de point à la fin de la promesse (sauf point d'exclamation)",
-      "example": "Développez votre stratégie bas carbone et mettez en œuvre votre plan de transition ceci est une promesse beaucoup ppppppppp troppppppppppppppppppp longueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "example": "Développez votre stratégie bas carbone et mettez en œuvre votre plan de transition",
       "type": "string",
       "constraints": {
         "maxLength": 180
