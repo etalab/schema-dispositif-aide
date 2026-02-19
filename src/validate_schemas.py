@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Validate all generated schemas"""
 
+import os
 from pathlib import Path
 from frictionless import validate, Package
 
@@ -44,8 +45,6 @@ if invalid > 0:
 #
 # Toggle with: VALIDATE_PACKAGE_DESCRIPTOR=true python3 src/validate_schemas.py
 # ---------------------------------------------------------------------------
-import os
-
 if os.environ.get("VALIDATE_PACKAGE_DESCRIPTOR") == "true":
     print("\n--- Experimental: Data Package descriptor validation ---")
     pkg_valid = 0

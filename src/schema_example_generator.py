@@ -30,7 +30,6 @@ class ExampleGenerator:
             for field in schema.get("fields", []):
                 field_name = field.get("name")
                 if field_name and "example" in field:
-                    # Use the example from the field definition
                     examples[field_name] = str(field["example"])
 
         return examples
@@ -67,12 +66,11 @@ class ExampleGenerator:
         """Generate a complete example CSV with all unique fields from all schemas."""
         examples = self.extract_examples_from_schemas(schemas_for_csv, schemas)
 
-        # Collect all unique field names
         all_fields = set()
         for schema_name, field_names in schemas_for_csv:
             all_fields.update(field_names)
 
-        all_fields = sorted(list(all_fields))
+        all_fields = sorted(all_fields)
 
         if not all_fields:
             return

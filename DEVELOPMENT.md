@@ -2,16 +2,16 @@
 
 ## Workflow automatisé
 
-**GitHub Actions génère et valide automatiquement les schémas** lors des modifications dans `schema/`.
+**GitHub Actions génère et valide automatiquement les schémas** lorsque sont détextées des modifications dans `schema/` lors d'un push. 
 
-- Sur push : Les schémas sont générés, validés et commitées automatiquement
-- Sur pull request : Un commentaire est ajouté si des changements sont nécessaires
-
-Vous n'avez qu'à modifier les fichiers sources dans `schema/core/` et `schema/extensions/`.
+Vous n'avez qu'à modifier les fichiers sources dans `schema/core/` et `schema/extensions/` et commit le tout dans une branche puis la push sur github.
 
 ## Modifier un schéma
 
 1. Ouvrir le fichier JSON concerné (core ou extension), ex: `schema/extensions/{category}/{name}.json`
+Catégory étant limité à "cible" ou "usage".
+(Autoriser plus d'option, nécessiterait d'introduire plus d'éléments de configuration, notamment pour pouvoir automatiquement savoir quelles combinaisons générer entre les différents catégories et les différents éléments de chaque catégorie.)
+
 2. Ajouter un champ dans le tableau `fields` :
 
 ```json
@@ -20,7 +20,11 @@ Vous n'avez qu'à modifier les fichiers sources dans `schema/core/` et `schema/e
   "title": "Titre du champ",
   "description": "Description",
   "type": "string",
-  "example": "valeur d'exemple"
+  "example": "valeur d'exemple",
+  "constraints": {
+    "required": true,
+    "maxLength": 500
+  }
 }
 ```
 
@@ -51,15 +55,6 @@ python3 src/build_schemas.py
 # Validate (optional - automated via GitHub Actions)
 python3 src/validate_schemas.py
 ```
-
-## Automated Workflow
-
-**GitHub Actions automatically builds and validates schemas** when you push changes to the `schema/` directory.
-
-- On push to main branches: Schemas are built, validated, and auto-committed if changes are detected
-- On pull requests: A comment is added if generated schemas need updating
-
-This means you only need to update the source schema files in `schema/core/` and `schema/extensions/`. The rest is handled automatically.
 
 ## Architecture
 

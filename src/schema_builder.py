@@ -1,11 +1,11 @@
 """Main schema builder orchestrator."""
 
 import copy
-from itertools import combinations
+from itertools import combinations, chain
 from pathlib import Path
 from typing import Dict, List, Tuple
 
-from models import BuildResult
+from models import BuildResult, SchemaEntry
 from schema_repository import SchemaRepository
 from schema_merger import SchemaMerger
 from schema_example_generator import ExampleGenerator
@@ -25,21 +25,12 @@ class SchemaBuilder:
     def get_usage_combinations(usage_extensions: Dict) -> List[tuple]:
         """Generate all combinations of usage extensions (0 or more)."""
         usage_names = list(usage_extensions.keys())
-        combinations_list = []
-
-        # Empty combination (no usage)
-        combinations_list.append(())
-
-        # Single usage extensions
-        for name in usage_names:
-            combinations_list.append((name,))
-
-        # Multiple usage extensions (2 or more)
-        for size in range(2, len(usage_names) + 1):
-            for combination in combinations(usage_names, size):
-                combinations_list.append(combination)
-
-        return combinations_list
+        return list(
+            chain.from_iterable(
+                combinations(usage_names, size)
+                for size in range(len(usage_names) + 1)
+            )
+        )
 
     @staticmethod
     def generate_schema_name(
@@ -62,24 +53,20 @@ class SchemaBuilder:
         table_schema: Dict, schema_name: str = None, known_cibles: List[str] = None
     ) -> Dict:
         """Convert a table schema to a Frictionless data package."""
-        # Build title and description based on schema_name variants
         title = "Dispositifs d'aides"
         description = table_schema.get("description", "")
 
         if schema_name and schema_name != "dispositif-aide":
-            # Extract cible and usage from schema_name
             parts = schema_name.replace("dispositif-aide-", "").split("-")
             cible_part = None
             usage_parts = []
 
-            # Check if first part is a known cible (derived from loaded extensions)
             if parts and known_cibles and parts[0] in known_cibles:
                 cible_part = parts[0]
                 usage_parts = parts[1:]
             else:
                 usage_parts = parts
 
-            # Build descriptive title
             title_parts = ["Dispositifs d'aides"]
             if cible_part:
                 title_parts.append(f"pour les {cible_part}")
@@ -87,7 +74,6 @@ class SchemaBuilder:
                 title_parts.append(f"({', '.join(usage_parts)})")
             title = " ".join(title_parts)
 
-            # Build descriptive description
             if cible_part or usage_parts:
                 description_parts = ["Extension du schéma dispositif-aide"]
                 if cible_part:
@@ -98,7 +84,6 @@ class SchemaBuilder:
                     )
                 description = " ".join(description_parts)
 
-        # Build data package with schema in resource
         datapackage = {
             "name": schema_name or "dispositif-aide",
             "title": title,
@@ -130,6 +115,34 @@ class SchemaBuilder:
         }
         return datapackage
 
+    def _build_and_save(
+        self,
+        schema_name: str,
+        combined: Dict,
+        known_cibles: List[str],
+        conflicts: List,
+        warnings: List,
+        schemas_for_csv: List[SchemaEntry],
+        generated_schemas: Dict,
+        combination_conflicts: List,
+        combination_warnings: List,
+    ) -> None:
+        """Save one schema combination and accumulate results."""
+        datapackage = self.to_datapackage(
+            combined, schema_name=schema_name, known_cibles=known_cibles
+        )
+        self.repository.save_schema(datapackage, self.build_dir / f"{schema_name}.json")
+        print(f"✓ {schema_name}.json")
+
+        field_names = [field["name"] for field in combined.get("fields", [])]
+        schemas_for_csv.append((schema_name, field_names))
+        generated_schemas[schema_name] = combined
+
+        conflicts.extend(combination_conflicts)
+        warnings.extend(combination_warnings)
+        if combination_conflicts:
+            self._report_conflicts(schema_name, combination_conflicts)
+
     def build_all_schemas(self) -> BuildResult:
         """Build all schema combinations."""
         print("Loading core schema...")
@@ -158,100 +171,62 @@ class SchemaBuilder:
 
         print("\nGenerating schemas...")
 
-        generated_count = 0
-        conflicts = []
-        warnings = []
-        schemas_for_csv = []
-        generated_schemas = {}  # Store schemas for example generation
+        conflicts: List = []
+        warnings: List = []
+        schemas_for_csv: List[SchemaEntry] = []
+        generated_schemas: Dict = {}
         known_cibles = list(cible_extensions.keys())
 
         # 1. Core only
-        core_schema_copy = copy.deepcopy(core_schema)
         core_name = self.generate_schema_name()
+        core_schema_copy = copy.deepcopy(core_schema)
         datapackage = self.to_datapackage(
             core_schema_copy, schema_name=core_name, known_cibles=known_cibles
         )
         self.repository.save_schema(datapackage, self.build_dir / f"{core_name}.json")
         print(f"✓ {core_name}.json")
-        generated_count += 1
-
-        # Get field names for CSV and store schema
-        core_field_names = [
-            field["name"] for field in core_schema_copy.get("fields", [])
-        ]
+        core_field_names = [field["name"] for field in core_schema_copy.get("fields", [])]
         schemas_for_csv.append((core_name, core_field_names))
         generated_schemas[core_name] = core_schema_copy
 
-        # 2. Core + usage combinations only (no cible)
+        # 2. Core + usage combinations (no cible)
         for usage_combination in usage_combinations:
             if not usage_combination:
                 continue
-
-            selected_usage_extensions = [
-                usage_extensions[name] for name in usage_combination
-            ]
-            combined, combination_conflicts, combination_warnings = (
-                self.merger.combine_schemas(
-                    core_schema, usage_extensions=selected_usage_extensions
-                )
+            selected_usage = [usage_extensions[name] for name in usage_combination]
+            combined, c_conflicts, c_warnings = self.merger.combine_schemas(
+                core_schema, usage_extensions=selected_usage
             )
             schema_name = self.generate_schema_name(usage_names=usage_combination)
-            datapackage = self.to_datapackage(
-                combined, schema_name=schema_name, known_cibles=known_cibles
+            self._build_and_save(
+                schema_name, combined, known_cibles,
+                conflicts, warnings, schemas_for_csv, generated_schemas,
+                c_conflicts, c_warnings,
             )
-            self.repository.save_schema(
-                datapackage, self.build_dir / f"{schema_name}.json"
-            )
-            print(f"✓ {schema_name}.json")
-            generated_count += 1
 
-            # Get field names for CSV and store schema
-            field_names = [field["name"] for field in combined.get("fields", [])]
-            schemas_for_csv.append((schema_name, field_names))
-            generated_schemas[schema_name] = combined
-
-            conflicts.extend(combination_conflicts)
-            warnings.extend(combination_warnings)
-            if combination_conflicts:
-                self._report_conflicts(schema_name, combination_conflicts)
-
-        # 3. Each cible with all usage combinations
+        # 3. Each cible × all usage combinations
         for cible_name, cible_extension in cible_extensions.items():
             for usage_combination in usage_combinations:
-                selected_usage_extensions = (
+                selected_usage = (
                     [usage_extensions[name] for name in usage_combination]
-                    if usage_combination
-                    else None
+                    if usage_combination else None
                 )
-                combined, combination_conflicts, combination_warnings = (
-                    self.merger.combine_schemas(
-                        core_schema,
-                        usage_extensions=selected_usage_extensions,
-                        cible_extension=cible_extension,
-                    )
+                combined, c_conflicts, c_warnings = self.merger.combine_schemas(
+                    core_schema,
+                    usage_extensions=selected_usage,
+                    cible_extension=cible_extension,
                 )
                 schema_name = self.generate_schema_name(
-                    usage_names=usage_combination if usage_combination else None,
+                    usage_names=usage_combination or None,
                     cible_name=cible_name,
                 )
-                datapackage = self.to_datapackage(
-                    combined, schema_name=schema_name, known_cibles=known_cibles
+                self._build_and_save(
+                    schema_name, combined, known_cibles,
+                    conflicts, warnings, schemas_for_csv, generated_schemas,
+                    c_conflicts, c_warnings,
                 )
-                self.repository.save_schema(
-                    datapackage, self.build_dir / f"{schema_name}.json"
-                )
-                print(f"✓ {schema_name}.json")
-                generated_count += 1
 
-                # Get field names for CSV and store schema
-                field_names = [field["name"] for field in combined.get("fields", [])]
-                schemas_for_csv.append((schema_name, field_names))
-                generated_schemas[schema_name] = combined
-
-                conflicts.extend(combination_conflicts)
-                warnings.extend(combination_warnings)
-                if combination_conflicts:
-                    self._report_conflicts(schema_name, combination_conflicts)
+        generated_count = len(schemas_for_csv)
 
         # Print summary
         self._print_summary(generated_count, conflicts, warnings)

@@ -11,12 +11,12 @@ class SchemaMerger:
     """Handles merging of schemas and detection of conflicts."""
 
     @staticmethod
-    def get_field_dict(fields: List[Dict]) -> Dict[str, Dict]:
+    def _get_field_dict(fields: List[Dict]) -> Dict[str, Dict]:
         """Convert field list to dict keyed by field name."""
         return {field["name"]: field for field in fields}
 
     @staticmethod
-    def get_field_type(field: Dict) -> str:
+    def _get_field_type(field: Dict) -> str:
         """Extract the type of a field."""
         return field.get("type", "string")
 
@@ -102,15 +102,13 @@ class SchemaMerger:
 
         for field_name, sources in fields_by_name.items():
             if len(sources) == 1:
-                # No conflict, take the field as is
                 merged_fields.append(sources[0][1])
             else:
-                # Check for type conflicts
                 types = set()
                 source_info = []
 
                 for source_name, field in sources:
-                    field_type = SchemaMerger.get_field_type(field)
+                    field_type = SchemaMerger._get_field_type(field)
                     types.add(field_type)
                     source_info.append((source_name, field_type, field))
 
@@ -156,28 +154,25 @@ class SchemaMerger:
             Tuple of (combined_schema, conflicts, warnings)
         """
         combined = copy.deepcopy(core_schema)
-        base_fields = SchemaMerger.get_field_dict(core_schema.get("fields", []))
+        base_fields = SchemaMerger._get_field_dict(core_schema.get("fields", []))
 
         fields_by_name = defaultdict(list)
         for name, field in base_fields.items():
             fields_by_name[name].append(("core", field))
 
-        # Add usage extension fields
         if usage_extensions:
             for usage_ext in usage_extensions:
-                usage_fields = SchemaMerger.get_field_dict(usage_ext.get("fields", []))
+                usage_fields = SchemaMerger._get_field_dict(usage_ext.get("fields", []))
                 for name, field in usage_fields.items():
                     fields_by_name[name].append((f"usage:{usage_ext['name']}", field))
 
-        # Add cible extension fields
         if cible_extension:
-            cible_fields = SchemaMerger.get_field_dict(cible_extension.get("fields", []))
+            cible_fields = SchemaMerger._get_field_dict(cible_extension.get("fields", []))
             for name, field in cible_fields.items():
                 fields_by_name[name].append(
                     (f"cible:{cible_extension['name']}", field)
                 )
 
-        # Merge fields and check for conflicts
         merged_fields, conflicts, warnings = self.merge_fields(fields_by_name)
         combined["fields"] = merged_fields
 
