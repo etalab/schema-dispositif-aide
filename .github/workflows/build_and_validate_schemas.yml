@@ -47,9 +47,6 @@ jobs:
       - name: Build schemas from source
         run: python3 src/build_schemas.py
 
-      - name: Validate generated schemas
-        run: python3 src/validate_schemas.py
-
       - name: Check for changes
         id: verify_diff
         run: |
@@ -63,3 +60,6 @@ jobs:
           git add build/
           git commit -m "chore: auto-generate schemas from source [skip ci]"
           git push
+
+      - name: Validate generated schemas
+        run: python3 src/validate_schemas.py
