@@ -22,4 +22,4 @@ class BuildResult:
     generated_count: int
     conflicts: List[FieldConflict]
     warnings: List[str]
-    schemas_for_csv: List[tuple]  # List of (schema_name, field_names)
+    schemas_for_csv: List[tuple]

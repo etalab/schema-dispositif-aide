@@ -46,12 +46,16 @@ class ExampleGenerator:
 
         for schema_name, field_names in schemas_for_csv:
             csv_path = self.examples_dir / f"exemple-{schema_name}.csv"
+            missing = [f for f in field_names if f not in examples]
+            if missing:
+                print(
+                    f"  ⚠ {schema_name}: missing example values for: {', '.join(missing)}"
+                )
             with open(csv_path, "w", newline="", encoding="utf-8") as f:
                 writer = csv.DictWriter(f, fieldnames=field_names)
                 writer.writeheader()
                 row = {field: examples.get(field, "") for field in field_names}
                 writer.writerow(row)
-            print(f"  ✓ {csv_path.name} ({len(field_names)} fields)")
 
         print(f"✓ Generated {len(schemas_for_csv)} example CSV files")
 

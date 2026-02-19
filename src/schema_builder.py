@@ -1,5 +1,6 @@
 """Main schema builder orchestrator."""
 
+import copy
 from itertools import combinations
 from pathlib import Path
 from typing import Dict, List, Tuple
@@ -57,7 +58,9 @@ class SchemaBuilder:
         return "-".join(parts)
 
     @staticmethod
-    def to_datapackage(table_schema: Dict, schema_name: str = None) -> Dict:
+    def to_datapackage(
+        table_schema: Dict, schema_name: str = None, known_cibles: List[str] = None
+    ) -> Dict:
         """Convert a table schema to a Frictionless data package."""
         # Build title and description based on schema_name variants
         title = "Dispositifs d'aides"
@@ -69,14 +72,8 @@ class SchemaBuilder:
             cible_part = None
             usage_parts = []
 
-            # Check if first part is a known cible
-            known_cibles = [
-                "associations",
-                "particuliers",
-                "professionnels",
-                "secteur-public",
-            ]
-            if parts and parts[0] in known_cibles:
+            # Check if first part is a known cible (derived from loaded extensions)
+            if parts and known_cibles and parts[0] in known_cibles:
                 cible_part = parts[0]
                 usage_parts = parts[1:]
             else:
@@ -150,7 +147,9 @@ class SchemaBuilder:
 
         # Get all usage combinations
         usage_combinations = self.get_usage_combinations(usage_extensions)
-        print(f"Will generate {len(usage_combinations)} usage combinations")
+        print(
+            f"Will generate {len(usage_combinations)*(len(cible_extensions)+1)} schemas"
+        )
 
         # Clean build directory
         self.build_dir.mkdir(parents=True, exist_ok=True)
@@ -164,11 +163,14 @@ class SchemaBuilder:
         warnings = []
         schemas_for_csv = []
         generated_schemas = {}  # Store schemas for example generation
+        known_cibles = list(cible_extensions.keys())
 
         # 1. Core only
-        core_schema_copy = core_schema.copy()
+        core_schema_copy = copy.deepcopy(core_schema)
         core_name = self.generate_schema_name()
-        datapackage = self.to_datapackage(core_schema_copy, schema_name=core_name)
+        datapackage = self.to_datapackage(
+            core_schema_copy, schema_name=core_name, known_cibles=known_cibles
+        )
         self.repository.save_schema(datapackage, self.build_dir / f"{core_name}.json")
         print(f"✓ {core_name}.json")
         generated_count += 1
@@ -194,7 +196,9 @@ class SchemaBuilder:
                 )
             )
             schema_name = self.generate_schema_name(usage_names=usage_combination)
-            datapackage = self.to_datapackage(combined, schema_name=schema_name)
+            datapackage = self.to_datapackage(
+                combined, schema_name=schema_name, known_cibles=known_cibles
+            )
             self.repository.save_schema(
                 datapackage, self.build_dir / f"{schema_name}.json"
             )
@@ -230,7 +234,9 @@ class SchemaBuilder:
                     usage_names=usage_combination if usage_combination else None,
                     cible_name=cible_name,
                 )
-                datapackage = self.to_datapackage(combined, schema_name=schema_name)
+                datapackage = self.to_datapackage(
+                    combined, schema_name=schema_name, known_cibles=known_cibles
+                )
                 self.repository.save_schema(
                     datapackage, self.build_dir / f"{schema_name}.json"
                 )
@@ -296,4 +302,4 @@ class SchemaBuilder:
         else:
             print("\n✓ No conflicts detected!")
 
-        print(f"\n✓ Generated {generated_count} schemas in: {self.build_dir}")
+        print(f"\n✓ Generated {generated_count} schemas")

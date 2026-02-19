@@ -1,5 +1,6 @@
 """Merge and combine schemas."""
 
+import copy
 from collections import defaultdict
 from typing import Dict, List, Tuple
 
@@ -18,6 +19,73 @@ class SchemaMerger:
     def get_field_type(field: Dict) -> str:
         """Extract the type of a field."""
         return field.get("type", "string")
+
+    @staticmethod
+    def merge_constraints(
+        field_name: str, sources_constraints: List[Tuple[str, Dict]]
+    ) -> Tuple[Dict, List[str]]:
+        """
+        Merge constraints from multiple sources of the same field.
+
+        Strategy:
+        - required, unique: True wins (most restrictive)
+        - maxLength, maximum, maximumLength: minimum value wins (most restrictive)
+        - minLength, minimum, minimumLength: maximum value wins (most restrictive)
+        - enum: intersection; warns and keeps first if result is empty
+        - pattern: kept from first source; warns if sources differ
+        - Other keys: first source wins; warns if sources differ
+        """
+        merged = {}
+        warnings = []
+
+        all_keys = set()
+        for _, c in sources_constraints:
+            all_keys.update(c.keys())
+
+        for key in all_keys:
+            values = [(src, c[key]) for src, c in sources_constraints if key in c]
+
+            if len(values) == 1:
+                merged[key] = values[0][1]
+                continue
+
+            if key in ("required", "unique"):
+                merged[key] = any(v for _, v in values)
+
+            elif key in ("maxLength", "maximum", "maximumLength"):
+                merged[key] = min(v for _, v in values)
+
+            elif key in ("minLength", "minimum", "minimumLength"):
+                merged[key] = max(v for _, v in values)
+
+            elif key == "enum":
+                sets = [set(v) for _, v in values]
+                intersection = sets[0].intersection(*sets[1:])
+                if not intersection:
+                    warnings.append(
+                        f"Field '{field_name}': constraint 'enum' has empty intersection across sources, keeping first source."
+                    )
+                    merged[key] = values[0][1]
+                else:
+                    merged[key] = sorted(intersection)
+
+            elif key == "pattern":
+                unique_patterns = list(dict.fromkeys(v for _, v in values))
+                if len(unique_patterns) > 1:
+                    warnings.append(
+                        f"Field '{field_name}': constraint 'pattern' differs across sources {[s for s, _ in values]}, keeping first."
+                    )
+                merged[key] = values[0][1]
+
+            else:
+                unique_values = list(dict.fromkeys(str(v) for _, v in values))
+                if len(unique_values) > 1:
+                    warnings.append(
+                        f"Field '{field_name}': constraint '{key}' differs across sources {[s for s, _ in values]}, keeping first."
+                    )
+                merged[key] = values[0][1]
+
+        return merged, warnings
 
     def merge_fields(
         self, fields_by_name: Dict[str, List[Tuple[str, Dict]]]
@@ -47,14 +115,22 @@ class SchemaMerger:
                     source_info.append((source_name, field_type, field))
 
                 if len(types) == 1:
-                    # All sources have same type, merge them
-                    merged_field = source_info[0][2].copy()
+                    # Same type: start from first source and merge constraints
+                    merged_field = copy.deepcopy(source_info[0][2])
+                    sources_constraints = [
+                        (src, f.get("constraints", {}))
+                        for src, _, f in source_info
+                        if f.get("constraints")
+                    ]
+                    if sources_constraints:
+                        merged_constraints, constraint_warnings = (
+                            self.merge_constraints(field_name, sources_constraints)
+                        )
+                        merged_field["constraints"] = merged_constraints
+                        warnings.extend(constraint_warnings)
                     merged_fields.append(merged_field)
-                    warnings.append(
-                        f"Field '{field_name}' found in {len(sources)} extensions with same type '{types.pop()}', merged."
-                    )
                 else:
-                    # Type conflict
+                    # Type conflict: keep first, report
                     conflict = FieldConflict(
                         field_name=field_name,
                         source1=source_info[0][0],
@@ -63,7 +139,6 @@ class SchemaMerger:
                         type2=source_info[1][1],
                     )
                     conflicts.append(conflict)
-                    # Keep first version
                     merged_fields.append(source_info[0][2])
 
         return merged_fields, conflicts, warnings
@@ -80,7 +155,7 @@ class SchemaMerger:
         Returns:
             Tuple of (combined_schema, conflicts, warnings)
         """
-        combined = core_schema.copy()
+        combined = copy.deepcopy(core_schema)
         base_fields = SchemaMerger.get_field_dict(core_schema.get("fields", []))
 
         fields_by_name = defaultdict(list)

@@ -1,7 +1,7 @@
 {
   "name": "pilotage",
-  "title": "Pilotage Extension",
-  "description": "Extension for governance and monitoring of aid devices",
+  "title": "Extension d'usage - Pilotage",
+  "description": "Extension créée pour une démonstration, champs non validés",
   "fields": [
     {
       "name": "budget_total_alloue",

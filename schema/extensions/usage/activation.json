@@ -1,7 +1,7 @@
 {
   "name": "activation",
-  "title": "Extension - activation",
-  "description": "Extension pour définir des aides plus facilement activables",
+  "title": "ExteExtension d'usage - activation",
+  "description": "Extension créée pour une démonstration, champs non validés - Extension pour définir des aides plus facilement activables",
   "fields": [
     {
       "name": "objectif1",
