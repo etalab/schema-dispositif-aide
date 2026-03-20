@@ -9,6 +9,7 @@
   ],
   "countryCode": "FR",
   "homepage": "https://github.com/etalab/schema-dispositif-aide",
+  "path": "https://github.com/etalab/schema-dispositif-aide/raw/v0.1.0/build/schemas/dispositif-aide-professionnels-pilotage.json",
   "licenses": [
     {
       "title": "Etalab Licence Ouverte 2.0",

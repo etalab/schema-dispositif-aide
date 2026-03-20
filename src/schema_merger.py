@@ -151,9 +151,9 @@ class SchemaMerger:
         Combine core schema with optional usage extensions and cible extension.
 
         Returns:
-            Tuple of (combined_schema, conflicts, warnings)
+            Tuple of (merged_schema, conflicts, warnings)
         """
-        combined = copy.deepcopy(core_schema)
+        merged_schema = copy.deepcopy(core_schema)
         base_fields = SchemaMerger._get_field_dict(core_schema.get("fields", []))
 
         fields_by_name = defaultdict(list)
@@ -174,6 +174,6 @@ class SchemaMerger:
                 )
 
         merged_fields, conflicts, warnings = SchemaMerger.merge_fields(fields_by_name)
-        combined["fields"] = merged_fields
+        merged_schema["fields"] = merged_fields
 
-        return combined, conflicts, warnings
+        return merged_schema, conflicts, warnings

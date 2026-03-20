@@ -68,13 +68,13 @@ class SchemaBuilder:
             if not usage_combination:
                 continue
             selected_usage = [usage_extensions[name] for name in usage_combination]
-            combined_fields, c_conflicts, c_warnings = SchemaMerger.combine_schemas(
+            merged_schema, c_conflicts, c_warnings = SchemaMerger.combine_schemas(
                 core_schema, usage_extensions=selected_usage
             )
             schema_name = self.generate_schema_name(usage_names=usage_combination)
             self._build_and_save(
                 schema_name,
-                combined_fields,
+                merged_schema,
                 known_cibles,
                 conflicts,
                 warnings,
@@ -92,7 +92,7 @@ class SchemaBuilder:
                     if usage_combination
                     else None
                 )
-                combined_fields, c_conflicts, c_warnings = SchemaMerger.combine_schemas(
+                merged_schema, c_conflicts, c_warnings = SchemaMerger.combine_schemas(
                     core_schema,
                     usage_extensions=selected_usage,
                     cible_extension=cible_extension,
@@ -103,7 +103,7 @@ class SchemaBuilder:
                 )
                 self._build_and_save(
                     schema_name,
-                    combined_fields,
+                    merged_schema,
                     known_cibles,
                     conflicts,
                     warnings,
@@ -163,11 +163,18 @@ class SchemaBuilder:
 
     @staticmethod
     def to_table_schema(
-        conbined_fields: dict, schema_name: str = None, known_cibles: list[str] = None
+        merged_schema: dict, schema_name: str = None, known_cibles: list[str] = None
     ) -> dict:
-        """Build a table schema from a merged schema and core metadata."""
+        """
+        Adjust a merged schema into a final table schema.
+
+        The input is already a valid table schema (deep copy of core with merged fields).
+        This method only overrides the fields that needs to be reedited per generated schema:
+        - name, title, description, resources, path
+        """
+        name = schema_name or "dispositif-aide"
         title = "Dispositifs d'aides"
-        description = conbined_fields.get("description", "")
+        description = merged_schema.get("description", "")
 
         if schema_name and schema_name != "dispositif-aide":
             parts = schema_name.replace("dispositif-aide-", "").split("-")
@@ -197,40 +204,25 @@ class SchemaBuilder:
                     )
                 description = " ".join(description_parts)
 
-        name = schema_name or "dispositif-aide"
-        table_schema = {
-            "$schema": "https://specs.frictionlessdata.io/schemas/table-schema.json",
-            "name": name,
-            "title": title,
-            "description": description,
-            "keywords": conbined_fields.get("keywords", []),
-            "countryCode": conbined_fields.get("countryCode"),
-            "homepage": conbined_fields.get("homepage"),
-            "licenses": conbined_fields.get("licenses", []),
-            "resources": [
-                {
-                    "title": "Fichier de validation (CSV)",
-                    "name": f"exemple-{name}-csv",
-                    "path": (
-                        f"exemples/exemple-{schema_name}.csv"
-                        if schema_name
-                        else "exemple-complet.csv"
-                    ),
-                }
-            ],
-            "sources": conbined_fields.get("sources", []),
-            "created": conbined_fields.get("created"),
-            "lastModified": conbined_fields.get("lastModified"),
-            "version": conbined_fields.get("version"),
-            "contributors": conbined_fields.get("contributors", []),
-            "fields": conbined_fields.get("fields", []),
-        }
+        table_schema = copy.deepcopy(merged_schema)
+        table_schema["name"] = name
+        table_schema["title"] = title
+        table_schema["description"] = description
+        table_schema["resources"] = [
+            {
+                "title": "Fichier de validation (CSV)",
+                "name": f"exemple-{name}-csv",
+                "path": f"exemples/exemple-{name}.csv",
+            }
+        ]
+        base_url = merged_schema.get("path", "").rsplit("/", 1)[0]
+        table_schema["path"] = f"{base_url}/{name}.json"
         return table_schema
 
     def _build_and_save(
         self,
         schema_name: str,
-        combined_fields: dict,
+        merged_schema: dict,
         known_cibles: list[str],
         conflicts: list,
         warnings: list,
@@ -241,16 +233,16 @@ class SchemaBuilder:
     ) -> None:
         """Save one schema combination and accumulate results."""
         table_schema = SchemaBuilder.to_table_schema(
-            combined_fields, schema_name=schema_name, known_cibles=known_cibles
+            merged_schema, schema_name=schema_name, known_cibles=known_cibles
         )
         SchemaRepository.save_schema(
             table_schema, self.build_dir / f"{schema_name}.json"
         )
         print(f"✓ {schema_name}.json")
 
-        field_names = [field["name"] for field in combined_fields.get("fields", [])]
+        field_names = [field["name"] for field in merged_schema.get("fields", [])]
         schemas_for_csv.append((schema_name, field_names))
-        generated_schemas[schema_name] = combined_fields
+        generated_schemas[schema_name] = merged_schema
 
         conflicts.extend(combination_conflicts)
         warnings.extend(combination_warnings)
