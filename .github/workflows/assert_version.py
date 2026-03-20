@@ -36,25 +36,18 @@ def check(obj, version, parents=""):
 
 SCHEMA_CORE_PATH = "schema/core/schema-core.json"
 
-to_check = []
+assert os.path.isfile(SCHEMA_CORE_PATH)
 
-if os.path.isfile(SCHEMA_CORE_PATH):
-    to_check.append(SCHEMA_CORE_PATH)
+with open(SCHEMA_CORE_PATH, "r") as f:
+    schema = json.load(f)
+version = schema["version"]
 
-else:
-    raise Exception("No required file found")
-
-for schema_path in to_check:
-    with open(schema_path, "r") as f:
-        schema = json.load(f)
-    version = schema["version"]
-
-    errors = check(schema, version)
-    if errors:
-        message = (
-            f"Versions are mismatched within the schema '{schema['name']}', "
-            f"expected version '{version}' but:"
-        )
-        for error_location, error_version in errors:
-            message += f"\n- {error_location} has version '{error_version}'"
-        raise Exception(message)
+errors = check(schema, version)
+if errors:
+    message = (
+        f"Versions are mismatched within the schema '{schema['name']}', "
+        f"expected version '{version}' but:"
+    )
+    for error_location, error_version in errors:
+        message += f"\n- {error_location} has version '{error_version}'"
+    raise Exception(message)

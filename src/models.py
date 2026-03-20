@@ -1,9 +1,8 @@
 """Data models for schema building."""
 
 from dataclasses import dataclass
-from typing import Dict, List, Tuple
 
-SchemaEntry = Tuple[str, List[str]]
+SchemaEntry = tuple[str, list[str]]
 
 
 @dataclass
@@ -22,6 +21,6 @@ class BuildResult:
     """Result of a build operation."""
 
     generated_count: int
-    conflicts: List[FieldConflict]
-    warnings: List[str]
-    schemas_for_csv: List[SchemaEntry]
+    conflicts: list[FieldConflict]
+    warnings: list[str]
+    schemas_for_csv: list[SchemaEntry]

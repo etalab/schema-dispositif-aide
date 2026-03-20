@@ -2,7 +2,6 @@
 
 import copy
 from collections import defaultdict
-from typing import Dict, List, Tuple
 
 from models import FieldConflict
 
@@ -11,19 +10,19 @@ class SchemaMerger:
     """Handles merging of schemas and detection of conflicts."""
 
     @staticmethod
-    def _get_field_dict(fields: List[Dict]) -> Dict[str, Dict]:
+    def _get_field_dict(fields: list[dict]) -> dict[str, dict]:
         """Convert field list to dict keyed by field name."""
         return {field["name"]: field for field in fields}
 
     @staticmethod
-    def _get_field_type(field: Dict) -> str:
+    def _get_field_type(field: dict) -> str:
         """Extract the type of a field."""
         return field.get("type", "string")
 
     @staticmethod
     def merge_constraints(
-        field_name: str, sources_constraints: List[Tuple[str, Dict]]
-    ) -> Tuple[Dict, List[str]]:
+        field_name: str, sources_constraints: list[tuple[str, dict]]
+    ) -> tuple[dict, list[str]]:
         """
         Merge constraints from multiple sources of the same field.
 
@@ -87,9 +86,10 @@ class SchemaMerger:
 
         return merged, warnings
 
+    @staticmethod
     def merge_fields(
-        self, fields_by_name: Dict[str, List[Tuple[str, Dict]]]
-    ) -> Tuple[List[Dict], List[FieldConflict], List[str]]:
+        fields_by_name: dict[str, list[tuple[str, dict]]]
+    ) -> tuple[list[dict], list[FieldConflict], list[str]]:
         """
         Merge fields from multiple sources.
 
@@ -122,7 +122,7 @@ class SchemaMerger:
                     ]
                     if sources_constraints:
                         merged_constraints, constraint_warnings = (
-                            self.merge_constraints(field_name, sources_constraints)
+                            SchemaMerger.merge_constraints(field_name, sources_constraints)
                         )
                         merged_field["constraints"] = merged_constraints
                         warnings.extend(constraint_warnings)
@@ -141,12 +141,12 @@ class SchemaMerger:
 
         return merged_fields, conflicts, warnings
 
+    @staticmethod
     def combine_schemas(
-        self,
-        core_schema: Dict,
-        usage_extensions: List[Dict] = None,
-        cible_extension: Dict = None,
-    ) -> Tuple[Dict, List[FieldConflict], List[str]]:
+        core_schema: dict,
+        usage_extensions: list[dict] = None,
+        cible_extension: dict = None,
+    ) -> tuple[dict, list[FieldConflict], list[str]]:
         """
         Combine core schema with optional usage extensions and cible extension.
 
@@ -173,7 +173,7 @@ class SchemaMerger:
                     (f"cible:{cible_extension['name']}", field)
                 )
 
-        merged_fields, conflicts, warnings = self.merge_fields(fields_by_name)
+        merged_fields, conflicts, warnings = SchemaMerger.merge_fields(fields_by_name)
         combined["fields"] = merged_fields
 
         return combined, conflicts, warnings

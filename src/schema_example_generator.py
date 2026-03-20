@@ -2,9 +2,6 @@
 
 import csv
 from pathlib import Path
-from typing import Dict, List, Tuple
-
-
 class ExampleGenerator:
     """Generates example CSV files for schemas using examples from field definitions."""
 
@@ -13,8 +10,8 @@ class ExampleGenerator:
         self.examples_dir = repo_root / "build" / "schemas" / "exemples"
 
     def extract_examples_from_schemas(
-        self, schemas_for_csv: List[Tuple[str, List[str]]], schemas: Dict[str, Dict]
-    ) -> Dict[str, str]:
+        self, schemas_for_csv: list[tuple[str, list[str]]], schemas: dict[str, dict]
+    ) -> dict[str, str]:
         """
         Extract example values directly from schema field definitions.
 
@@ -36,8 +33,8 @@ class ExampleGenerator:
 
     def generate_individual_examples(
         self,
-        schemas_for_csv: List[Tuple[str, List[str]]],
-        schemas: Dict[str, Dict],
+        schemas_for_csv: list[tuple[str, list[str]]],
+        schemas: dict[str, dict],
     ) -> None:
         """Generate a CSV file for each schema with only its fields."""
         examples = self.extract_examples_from_schemas(schemas_for_csv, schemas)
@@ -60,8 +57,8 @@ class ExampleGenerator:
 
     def generate_complete_example(
         self,
-        schemas_for_csv: List[Tuple[str, List[str]]],
-        schemas: Dict[str, Dict],
+        schemas_for_csv: list[tuple[str, list[str]]],
+        schemas: dict[str, dict],
     ) -> None:
         """Generate a complete example CSV with all unique fields from all schemas."""
         examples = self.extract_examples_from_schemas(schemas_for_csv, schemas)
