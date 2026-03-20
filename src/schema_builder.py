@@ -43,19 +43,19 @@ class SchemaBuilder:
             json_file.unlink()
 
         # Generate schemas
-        conflicts: List = []
-        warnings: List = []
-        schemas_for_csv: List[SchemaEntry] = []
-        generated_schemas: Dict = {}
+        conflicts: list = []
+        warnings: list = []
+        schemas_for_csv: list[SchemaEntry] = []
+        generated_schemas: dict = {}
         known_cibles = list(cible_extensions.keys())
 
         # 1. Core only
         core_name = self.generate_schema_name()
         core_schema_copy = copy.deepcopy(core_schema)
-        datapackage = self.to_datapackage(
+        table_schema = SchemaBuilder.to_table_schema(
             core_schema_copy, schema_name=core_name, known_cibles=known_cibles
         )
-        SchemaRepository.save_schema(datapackage, self.build_dir / f"{core_name}.json")
+        SchemaRepository.save_schema(table_schema, self.build_dir / f"{core_name}.json")
         print(f"✓ {core_name}.json")
         core_field_names = [
             field["name"] for field in core_schema_copy.get("fields", [])
@@ -68,13 +68,13 @@ class SchemaBuilder:
             if not usage_combination:
                 continue
             selected_usage = [usage_extensions[name] for name in usage_combination]
-            combined, c_conflicts, c_warnings = SchemaMerger.combine_schemas(
+            combined_fields, c_conflicts, c_warnings = SchemaMerger.combine_schemas(
                 core_schema, usage_extensions=selected_usage
             )
             schema_name = self.generate_schema_name(usage_names=usage_combination)
             self._build_and_save(
                 schema_name,
-                combined,
+                combined_fields,
                 known_cibles,
                 conflicts,
                 warnings,
@@ -92,7 +92,7 @@ class SchemaBuilder:
                     if usage_combination
                     else None
                 )
-                combined, c_conflicts, c_warnings = SchemaMerger.combine_schemas(
+                combined_fields, c_conflicts, c_warnings = SchemaMerger.combine_schemas(
                     core_schema,
                     usage_extensions=selected_usage,
                     cible_extension=cible_extension,
@@ -103,7 +103,7 @@ class SchemaBuilder:
                 )
                 self._build_and_save(
                     schema_name,
-                    combined,
+                    combined_fields,
                     known_cibles,
                     conflicts,
                     warnings,
@@ -162,12 +162,12 @@ class SchemaBuilder:
         return "-".join(parts)
 
     @staticmethod
-    def to_datapackage(
-        table_schema: dict, schema_name: str = None, known_cibles: list[str] = None
+    def to_table_schema(
+        conbined_fields: dict, schema_name: str = None, known_cibles: list[str] = None
     ) -> dict:
-        """Convert a table schema to a Frictionless data package."""
+        """Build a table schema from a merged schema and core metadata."""
         title = "Dispositifs d'aides"
-        description = table_schema.get("description", "")
+        description = conbined_fields.get("description", "")
 
         if schema_name and schema_name != "dispositif-aide":
             parts = schema_name.replace("dispositif-aide-", "").split("-")
@@ -197,41 +197,40 @@ class SchemaBuilder:
                     )
                 description = " ".join(description_parts)
 
-        datapackage = {
-            "name": schema_name or "dispositif-aide",
+        name = schema_name or "dispositif-aide"
+        table_schema = {
+            "$schema": "https://specs.frictionlessdata.io/schemas/table-schema.json",
+            "name": name,
             "title": title,
             "description": description,
-            "created": table_schema.get("created"),
-            "lastModified": table_schema.get("lastModified"),
-            "version": table_schema.get("version"),
-            "countryCode": table_schema.get("countryCode"),
-            "homepage": table_schema.get("homepage"),
-            "licenses": table_schema.get("licenses", []),
-            "contributors": table_schema.get("contributors", []),
-            "sources": table_schema.get("sources", []),
-            "keywords": table_schema.get("keywords", []),
+            "keywords": conbined_fields.get("keywords", []),
+            "countryCode": conbined_fields.get("countryCode"),
+            "homepage": conbined_fields.get("homepage"),
+            "licenses": conbined_fields.get("licenses", []),
             "resources": [
                 {
-                    "name": "validation_file",
-                    "title": "Validation file",
+                    "title": "Fichier de validation (CSV)",
+                    "name": f"exemple-{name}-csv",
                     "path": (
                         f"exemples/exemple-{schema_name}.csv"
                         if schema_name
                         else "exemple-complet.csv"
                     ),
-                    "schema": {
-                        "$schema": "https://specs.frictionlessdata.io/schemas/table-schema.json",
-                        "fields": table_schema.get("fields", []),
-                    },
                 }
             ],
+            "sources": conbined_fields.get("sources", []),
+            "created": conbined_fields.get("created"),
+            "lastModified": conbined_fields.get("lastModified"),
+            "version": conbined_fields.get("version"),
+            "contributors": conbined_fields.get("contributors", []),
+            "fields": conbined_fields.get("fields", []),
         }
-        return datapackage
+        return table_schema
 
     def _build_and_save(
         self,
         schema_name: str,
-        combined: dict,
+        combined_fields: dict,
         known_cibles: list[str],
         conflicts: list,
         warnings: list,
@@ -241,17 +240,17 @@ class SchemaBuilder:
         combination_warnings: list,
     ) -> None:
         """Save one schema combination and accumulate results."""
-        datapackage = self.to_datapackage(
-            combined, schema_name=schema_name, known_cibles=known_cibles
+        table_schema = SchemaBuilder.to_table_schema(
+            combined_fields, schema_name=schema_name, known_cibles=known_cibles
         )
         SchemaRepository.save_schema(
-            datapackage, self.build_dir / f"{schema_name}.json"
+            table_schema, self.build_dir / f"{schema_name}.json"
         )
         print(f"✓ {schema_name}.json")
 
-        field_names = [field["name"] for field in combined.get("fields", [])]
+        field_names = [field["name"] for field in combined_fields.get("fields", [])]
         schemas_for_csv.append((schema_name, field_names))
-        generated_schemas[schema_name] = combined
+        generated_schemas[schema_name] = combined_fields
 
         conflicts.extend(combination_conflicts)
         warnings.extend(combination_warnings)
@@ -265,6 +264,31 @@ class SchemaBuilder:
             print(f"    - Field '{conflict.field_name}' has conflicting types:")
             print(f"      {conflict.source1}: {conflict.type1}")
             print(f"      {conflict.source2}: {conflict.type2}")
+
+    def _generate_root_datapackage(self, schemas_for_csv: list[SchemaEntry]) -> None:
+        """Generate root-level datapackage.json listing all generated schemas."""
+        resources = [
+            {
+                "name": schema_name,
+                "path": f"build/schemas/exemples/exemple-{schema_name}.csv",
+                "profile": "tabular-data-resource",
+                "format": "csv",
+                "mediatype": "text/csv",
+                "encoding": "utf-8",
+                "schema": f"build/schemas/{schema_name}.json",
+                "documentation": "README.md",
+            }
+            for schema_name, _ in schemas_for_csv
+        ]
+        datapackage = {
+            "name": "schemas-dispositif-aide",
+            "title": "Schémas des dispositifs d'aide",
+            "description": "Schémas de données permettant de décrire plus ou moins précisément les dispositifs d'aide",
+            "id": "schemas-dispositif-aide",
+            "resources": resources,
+        }
+        SchemaRepository.save_schema(datapackage, self.repo_root / "datapackage.json")
+        print("✓ datapackage.json")
 
     def _print_summary(
         self, generated_count: int, conflicts: list, warnings: list

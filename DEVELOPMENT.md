@@ -45,8 +45,8 @@ Pour ajouter une nouvelle cible ou un nouvel usage :
 
 ```bash
 # Environment
-python3 -m venv venv
-source venv/bin/activate
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 
 # Generate schemas and example files (optional - automated via GitHub Actions)

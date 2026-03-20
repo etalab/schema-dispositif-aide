@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Validate all generated schemas"""
+"""Validate all generated schemas and their example CSV files."""
 
-import os
 from pathlib import Path
-from frictionless import validate, Package
+from frictionless import validate
 
-print("Validation des schémas générés...")
 schemas_dir = Path("build/schemas")
+examples_dir = schemas_dir / "exemples"
+root_datapackage = Path("datapackage.json")
 
 if not schemas_dir.exists():
     print("❌ Aucun schéma généré. Exécutez d'abord : python3 src/build_schemas.py")
@@ -15,55 +15,51 @@ if not schemas_dir.exists():
 valid = 0
 invalid = 0
 
+
+def check(report, label: str) -> None:
+    global valid, invalid
+    if report.valid:
+        print(f"✓ {label}")
+        valid += 1
+    else:
+        print(f"❌ {label}")
+        for error in report.flatten(["type", "message"]):
+            print(f"   {error}")
+        invalid += 1
+
+
+print("--- Validation de l'ensemble du datapackage ---")
+if not root_datapackage.exists():
+    print(f"❌ {root_datapackage}: fichier introuvable")
+    invalid += 1
+else:
+    try:
+        check(validate(str(root_datapackage)), root_datapackage.name)
+    except Exception as e:
+        print(f"❌ {root_datapackage}: {e}")
+        invalid += 1
+
+print("\n--- Détail des validations des schémas ---")
 for schema_file in sorted(schemas_dir.glob("*.json")):
     try:
-        report = validate(str(schema_file))
-        if report.valid:
-            print(f"✓ {schema_file.name}")
-            valid += 1
-        else:
-            print(f"❌ {schema_file.name}")
-            invalid += 1
-            for error in report.flatten(["type", "message"]):
-                print(f"   {error}")
+        check(validate(str(schema_file), type="schema"), schema_file.name)
     except Exception as e:
         print(f"❌ {schema_file.name}: {e}")
         invalid += 1
 
-print(f"\nRésumé: {valid} valides, {invalid} invalides")
+print("\n--- Détail des validations des exemples CSV contre leur schéma ---")
+for schema_file in sorted(schemas_dir.glob("*.json")):
+    csv_file = examples_dir / f"exemple-{schema_file.stem}.csv"
+    if not csv_file.exists():
+        print(f"❌ {csv_file.name}: fichier exemple introuvable")
+        invalid += 1
+        continue
+    try:
+        check(validate(str(csv_file), schema=str(schema_file)), csv_file.name)
+    except Exception as e:
+        print(f"❌ {csv_file.name}: {e}")
+        invalid += 1
 
+print(f"\nRésumé: {valid} tests valides, {invalid} invalides")
 if invalid > 0:
     exit(1)
-
-# ---------------------------------------------------------------------------
-# EXPERIMENTAL: Data Package descriptor validation via frictionless.Package
-#
-# Package.metadata_valid checks conformance to the Frictionless Data Package
-# spec (https://specs.frictionlessdata.io/data-package/): required fields
-# (name, resources), valid resource paths, well-formed license/contributor
-# objects, etc. It does NOT validate field types or constraint logic.
-#
-# Toggle with: VALIDATE_PACKAGE_DESCRIPTOR=true python3 src/validate_schemas.py
-# ---------------------------------------------------------------------------
-if os.environ.get("VALIDATE_PACKAGE_DESCRIPTOR") == "true":
-    print("\n--- Experimental: Data Package descriptor validation ---")
-    pkg_valid = 0
-    pkg_invalid = 0
-
-    for schema_file in sorted(schemas_dir.glob("*.json")):
-        try:
-            package = Package(str(schema_file))
-            errors = list(package.metadata_validate(package.to_descriptor()))
-            if not errors:
-                print(f"✓ {schema_file.name}")
-                pkg_valid += 1
-            else:
-                print(f"❌ {schema_file.name}")
-                pkg_invalid += 1
-                for error in errors:
-                    print(f"   {error}")
-        except Exception as e:
-            print(f"❌ {schema_file.name}: {e}")
-            pkg_invalid += 1
-
-    print(f"\nRésumé descripteur: {pkg_valid} valides, {pkg_invalid} invalides")
