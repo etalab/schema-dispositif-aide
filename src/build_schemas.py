@@ -16,7 +16,7 @@ from schema_builder import SchemaBuilder
 def main():
     """Main entry point."""
     try:
-        SchemaBuilder().build_all_schemas()
+        SchemaBuilder(Path(__file__).parent.parent).build_all_schemas()
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)

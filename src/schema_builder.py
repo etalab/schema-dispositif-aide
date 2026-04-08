@@ -13,8 +13,8 @@ from schema_example_generator import ExampleGenerator
 class SchemaBuilder:
     """Orchestrates the schema building process."""
 
-    def __init__(self):
-        self.repo_root = Path(__file__).parent.parent
+    def __init__(self, repo_root: Path):
+        self.repo_root = repo_root
         self.repository = SchemaRepository(self.repo_root)
         self.example_gen = ExampleGenerator(self.repo_root)
         self.build_dir = self.repo_root / "build" / "schemas"
