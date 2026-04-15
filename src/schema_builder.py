@@ -4,6 +4,7 @@ import copy
 from itertools import combinations, chain
 from pathlib import Path
 
+import constants
 from models import BuildResult, SchemaEntry
 from schema_repository import SchemaRepository
 from schema_merger import SchemaMerger
@@ -17,7 +18,7 @@ class SchemaBuilder:
         self.repo_root = repo_root
         self.repository = SchemaRepository(self.repo_root)
         self.example_gen = ExampleGenerator(self.repo_root)
-        self.build_dir = self.repo_root / "build" / "schemas"
+        self.build_dir = self.repo_root / constants.BUILD_SCHEMAS
 
     def build_all_schemas(self) -> BuildResult:
         """Build all schema combinations."""
@@ -151,7 +152,7 @@ class SchemaBuilder:
         cible_name: str = None,
     ) -> str:
         """Generate a schema name from usage and cible components."""
-        parts = ["dispositif-aide"]
+        parts = [constants.BASE_NAME]
 
         if cible_name:
             parts.append(cible_name)
@@ -172,12 +173,12 @@ class SchemaBuilder:
         This method only overrides the fields that needs to be reedited per generated schema:
         - name, title, description, resources, path
         """
-        name = schema_name or "dispositif-aide"
-        title = "Dispositifs d'aides"
+        name = schema_name or constants.BASE_NAME
+        title = constants.BASE_TITLE
         description = merged_schema.get("description", "")
 
-        if schema_name and schema_name != "dispositif-aide":
-            parts = schema_name.replace("dispositif-aide-", "").split("-")
+        if schema_name and schema_name != constants.BASE_NAME:
+            parts = schema_name.replace(f"{constants.BASE_NAME}-", "").split("-")
             cible_part = None
             usage_parts = []
 
@@ -187,7 +188,7 @@ class SchemaBuilder:
             else:
                 usage_parts = parts
 
-            title_parts = ["Dispositifs d'aides"]
+            title_parts = [constants.BASE_TITLE]
             if cible_part:
                 title_parts.append(f"pour les {cible_part}")
             if usage_parts:
@@ -195,7 +196,7 @@ class SchemaBuilder:
             title = " ".join(title_parts)
 
             if cible_part or usage_parts:
-                description_parts = ["Extension du schéma dispositif-aide"]
+                description_parts = [f"Extension du schéma {constants.BASE_NAME}"]
                 if cible_part:
                     description_parts.append(f"pour la cible '{cible_part}'")
                 if usage_parts:
@@ -210,9 +211,9 @@ class SchemaBuilder:
         table_schema["description"] = description
         table_schema["resources"] = [
             {
-                "title": "Fichier de validation (CSV)",
-                "name": f"exemple-{name}-csv",
-                "path": f"exemples/exemple-{name}.csv",
+                "title": constants.RESOURCE_CSV_LABEL,
+                "name": constants.schema_resource_name(name),
+                "path": constants.schema_resource_csv_path(name),
             }
         ]
         base_url = merged_schema.get("path", "").rsplit("/", 1)[0]
@@ -262,24 +263,26 @@ class SchemaBuilder:
         resources = [
             {
                 "name": schema_name,
-                "path": f"build/schemas/exemples/exemple-{schema_name}.csv",
+                "path": constants.datapackage_csv_path(schema_name),
                 "profile": "tabular-data-resource",
                 "format": "csv",
                 "mediatype": "text/csv",
                 "encoding": "utf-8",
-                "schema": f"build/schemas/{schema_name}.json",
-                "documentation": "README.md",
+                "schema": (constants.BUILD_SCHEMAS / f"{schema_name}.json").as_posix(),
+                "documentation": constants.DOCUMENTATION,
             }
             for schema_name, _ in schemas_for_csv
         ]
         datapackage = {
-            "name": "schemas-dispositif-aide",
-            "title": "Schémas des dispositifs d'aide",
-            "description": "Schémas de données permettant de décrire plus ou moins précisément les dispositifs d'aide",
-            "id": "schemas-dispositif-aide",
+            "name": constants.DATAPACKAGE_NAME,
+            "title": constants.DATAPACKAGE_TITLE,
+            "description": constants.DATAPACKAGE_DESC,
+            "id": constants.DATAPACKAGE_NAME,
             "resources": resources,
         }
-        SchemaRepository.save_schema(datapackage, self.repo_root / "datapackage.json")
+        SchemaRepository.save_schema(
+            datapackage, self.repo_root / constants.DATAPACKAGE
+        )
         print("✓ datapackage.json")
 
     def _print_summary(

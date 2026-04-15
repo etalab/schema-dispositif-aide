@@ -2,13 +2,17 @@
 
 import csv
 from pathlib import Path
+
+import constants
+
+
 class ExampleGenerator:
     """Generates example CSV files for schemas using examples from field definitions."""
 
     def __init__(self, repo_root: Path):
         self.repo_root = repo_root
-        self.examples_dir = repo_root / "build" / "exemples"
-        self.schemas_examples_dir = self.examples_dir / "par_schema"
+        self.examples_dir = repo_root / constants.BUILD_EXEMPLES
+        self.schemas_examples_dir = repo_root / constants.BUILD_EXEMPLES_PAR_SCHEMA
 
     def extract_examples_from_schemas(
         self, schemas_for_csv: list[tuple[str, list[str]]], schemas: dict[str, dict]
@@ -42,7 +46,7 @@ class ExampleGenerator:
         self.schemas_examples_dir.mkdir(parents=True, exist_ok=True)
 
         for schema_name, field_names in schemas_for_csv:
-            csv_path = self.schemas_examples_dir / f"exemple-{schema_name}.csv"
+            csv_path = self.schemas_examples_dir / constants.csv_filename(schema_name)
             missing = [f for f in field_names if f not in examples]
             if missing:
                 print(
@@ -74,7 +78,7 @@ class ExampleGenerator:
             return
 
         example_row = {field: examples.get(field, "") for field in all_fields}
-        csv_path = self.examples_dir / "exemple-complet.csv"
+        csv_path = self.examples_dir / constants.EXEMPLE_COMPLET_CSV
 
         with open(csv_path, "w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=all_fields)

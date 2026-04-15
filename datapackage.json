@@ -6,82 +6,12 @@
   "resources": [
     {
       "name": "dispositif-aide",
-      "path": "build/schemas/exemples/exemple-dispositif-aide.csv",
+      "path": "build/exemples/par_schema/exemple-dispositif-aide.csv",
       "profile": "tabular-data-resource",
       "format": "csv",
       "mediatype": "text/csv",
       "encoding": "utf-8",
       "schema": "build/schemas/dispositif-aide.json",
-      "documentation": "README.md"
-    },
-    {
-      "name": "dispositif-aide-activation",
-      "path": "build/schemas/exemples/exemple-dispositif-aide-activation.csv",
-      "profile": "tabular-data-resource",
-      "format": "csv",
-      "mediatype": "text/csv",
-      "encoding": "utf-8",
-      "schema": "build/schemas/dispositif-aide-activation.json",
-      "documentation": "README.md"
-    },
-    {
-      "name": "dispositif-aide-pilotage",
-      "path": "build/schemas/exemples/exemple-dispositif-aide-pilotage.csv",
-      "profile": "tabular-data-resource",
-      "format": "csv",
-      "mediatype": "text/csv",
-      "encoding": "utf-8",
-      "schema": "build/schemas/dispositif-aide-pilotage.json",
-      "documentation": "README.md"
-    },
-    {
-      "name": "dispositif-aide-activation-pilotage",
-      "path": "build/schemas/exemples/exemple-dispositif-aide-activation-pilotage.csv",
-      "profile": "tabular-data-resource",
-      "format": "csv",
-      "mediatype": "text/csv",
-      "encoding": "utf-8",
-      "schema": "build/schemas/dispositif-aide-activation-pilotage.json",
-      "documentation": "README.md"
-    },
-    {
-      "name": "dispositif-aide-professionnels",
-      "path": "build/schemas/exemples/exemple-dispositif-aide-professionnels.csv",
-      "profile": "tabular-data-resource",
-      "format": "csv",
-      "mediatype": "text/csv",
-      "encoding": "utf-8",
-      "schema": "build/schemas/dispositif-aide-professionnels.json",
-      "documentation": "README.md"
-    },
-    {
-      "name": "dispositif-aide-professionnels-activation",
-      "path": "build/schemas/exemples/exemple-dispositif-aide-professionnels-activation.csv",
-      "profile": "tabular-data-resource",
-      "format": "csv",
-      "mediatype": "text/csv",
-      "encoding": "utf-8",
-      "schema": "build/schemas/dispositif-aide-professionnels-activation.json",
-      "documentation": "README.md"
-    },
-    {
-      "name": "dispositif-aide-professionnels-pilotage",
-      "path": "build/schemas/exemples/exemple-dispositif-aide-professionnels-pilotage.csv",
-      "profile": "tabular-data-resource",
-      "format": "csv",
-      "mediatype": "text/csv",
-      "encoding": "utf-8",
-      "schema": "build/schemas/dispositif-aide-professionnels-pilotage.json",
-      "documentation": "README.md"
-    },
-    {
-      "name": "dispositif-aide-professionnels-activation-pilotage",
-      "path": "build/schemas/exemples/exemple-dispositif-aide-professionnels-activation-pilotage.csv",
-      "profile": "tabular-data-resource",
-      "format": "csv",
-      "mediatype": "text/csv",
-      "encoding": "utf-8",
-      "schema": "build/schemas/dispositif-aide-professionnels-activation-pilotage.json",
       "documentation": "README.md"
     }
   ]

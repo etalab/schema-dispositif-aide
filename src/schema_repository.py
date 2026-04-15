@@ -3,15 +3,17 @@
 import json
 from pathlib import Path
 
+import constants
+
 
 class SchemaRepository:
     """Handles loading and saving of schema and extension files."""
 
     def __init__(self, repo_root: Path):
         self.repo_root = repo_root
-        self.schema_dir = repo_root / "schema"
-        self.core_path = self.schema_dir / "core" / "schema-core.json"
-        self.extensions_dir = self.schema_dir / "extensions"
+        self.schema_dir = repo_root / constants.SCHEMA_DIR
+        self.core_path = repo_root / constants.SCHEMA_CORE
+        self.extensions_dir = repo_root / constants.SCHEMA_EXTENSIONS
 
     @staticmethod
     def load_schema(path: Path) -> dict:

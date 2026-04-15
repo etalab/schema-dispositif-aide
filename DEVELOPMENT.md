@@ -144,6 +144,10 @@ frictionless validate data.csv --schema build/schemas/dispositif-aide.json
 python3 scripts/validate_schemas.py
 ```
 
+When working on the code, the evolutions should be tested with 
+```bash
+python -m unittest tests/test_*.py
+```
 ## References
 
 - [Frictionless Data Specs](https://specs.frictionlessdata.io/)
