@@ -1,0 +1,14 @@
+{
+  "name": "pilotage",
+  "title": "Extension d'usage - Pilotage",
+  "description": "Extension créée pour une démonstration, champs non validés",
+  "fields": [
+    {
+      "name": "budget_total_alloue",
+      "title": "Budget total alloué",
+      "description": "Budget total alloué au dispositif en euros",
+      "example": "1000000",
+      "type": "number"
+    }
+  ]
+}

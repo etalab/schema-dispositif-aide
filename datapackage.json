@@ -1,0 +1,18 @@
+{
+  "name": "schemas-dispositif-aide",
+  "title": "Schémas des dispositifs d'aide",
+  "description": "Schémas de données permettant de décrire plus ou moins précisément les dispositifs d'aide",
+  "id": "schemas-dispositif-aide",
+  "resources": [
+    {
+      "name": "dispositif-aide",
+      "path": "build/exemples/par_schema/exemple-dispositif-aide.csv",
+      "profile": "tabular-data-resource",
+      "format": "csv",
+      "mediatype": "text/csv",
+      "encoding": "utf-8",
+      "schema": "build/schemas/dispositif-aide.json",
+      "documentation": "README.md"
+    }
+  ]
+}

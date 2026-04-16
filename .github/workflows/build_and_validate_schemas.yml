@@ -1,0 +1,68 @@
+name: Build and Validate Schemas
+
+on:
+  push:
+    branches:
+      - master
+      - feat/**
+    paths:
+      - "schema/**/*.json"
+      - "src/**/*.py"
+      - "requirements.txt"
+  pull_request:
+    paths:
+      - "schema/**/*.json"
+      - "src/**/*.py"
+      - "requirements.txt"
+
+jobs:
+  build-and-validate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Cache pip
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+            ${{ runner.os }}-
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run tests
+        run: python -m unittest tests/test_*.py
+
+      - name: Build schemas from source
+        run: python3 src/build_schemas.py
+
+      - name: Check for changes
+        id: verify_diff
+        run: |
+          git diff --quiet build/ || echo "changed=true" >> $GITHUB_OUTPUT
+
+      - name: Commit and push if changes detected
+        if: steps.verify_diff.outputs.changed == 'true' && github.event_name == 'push'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add build/
+          git commit -m "chore: auto-generate schemas from source [skip ci]"
+          git push
+
+      - name: Validate generated schemas
+        run: python3 src/validate_schemas.py

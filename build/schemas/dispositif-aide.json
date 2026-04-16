@@ -9,7 +9,7 @@
   ],
   "countryCode": "FR",
   "homepage": "https://github.com/etalab/schema-dispositif-aide",
-  "path": "https://github.com/etalab/schema-dispositif-aide/raw/v0.1.0/schema.json",
+  "path": "https://github.com/etalab/schema-dispositif-aide/raw/v0.1.0/build/schemas/dispositif-aide.json",
   "licenses": [
     {
       "title": "Etalab Licence Ouverte 2.0",
@@ -19,14 +19,14 @@
   ],
   "resources": [
     {
-      "title": "Fichier valide (CSV)",
-      "name": "exemple-valide-csv",
-      "path": "https://github.com/etalab/schema-dispositif-aide/raw/v0.1.0/exemple-valide.csv"
+      "title": "Fichier de validation (CSV)",
+      "name": "exemple-dispositif-aide-csv",
+      "path": "exemples/par_schema/exemple-dispositif-aide.csv"
     }
   ],
   "sources": [],
-  "created": "2022-03-14",
-  "lastModified": "2025-09-12",
+  "created": "2022-03-14T00:00:00Z",
+  "lastModified": "2025-09-12T00:00:00Z",
   "version": "v0.1.0",
   "contributors": [
     {
@@ -153,7 +153,7 @@
       "name": "eligibilite_geographique",
       "title": "Couverture géographique de l’aide",
       "description": "Couverture géographique du dispositif. Champ à écrire en utilisant le formalisme du Code Officiel Géographique du COG : https://www.insee.fr/fr/information/5230987. Séparer chaque code COG par des pipes",
-      "example": "PAYS-99100 pour la France entière    OU    REG-84|DEP-05 pour la région Auvergne-Rhône-Alpes et le département des Hautes-Alpes",
+      "example": "PAYS-99100",
       "type": "string",
       "constraints": {
         "required": true,
@@ -164,7 +164,7 @@
       "name": "eligibilite_geographique_exclusions",
       "title": "Couverture géographique de l’aide - exclusions",
       "description": "Aires géographique exclues du dispositif. Cette propriété a précédence sur les \"eligibilite_geographique\" s'il y a recouvrement. Champ à écrire en utilisant le formalisme du Code Officiel Géographique : https: //www.insee.fr/fr/information/5230987. Séparer chaque code COG par des pipes.",
-      "example": "DEP-01|COM-83141",
+      "example": "REG-84|DEP-01|COM-83141",
       "type": "string",
       "constraints": {
         "pattern": "^[A-Z]+-\\d+(\\|[A-Z]+-\\d+)*$"
