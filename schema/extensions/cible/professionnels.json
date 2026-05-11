@@ -4,6 +4,13 @@
   "description": "Ajout de champs permettant de préciser l'éligibilité des entreprises aux différents dispositifs d'aides ainsi que les informations administratives nécessaires à leur instruction (référents internes, base juridique, chaînage avec une demande de paiement).",
   "fields": [
     {
+      "name": "bases_juridiques",
+      "title": "Bases juridiques",
+      "description": "Une liste de références vers les textes juridiques qui servent de base au dispositif d'aide. Format : liste JSON d'objets ayant obligatoirement un champ 'libelle' et un champ 'lien', afin de représenter une collection de liens hypertexte.",
+      "example": "[{ libelle: 'Arrêté n° 123456', lien: 'https://www.legifrance.fr/arrete-123456' }, { libelle: 'Règlement de minimis', lien: 'https://europa.eu/reglement-de-minimis' }]",
+      "type": "string"
+    },
+    {
       "name": "eligibilite_effectifs_minimum",
       "title": "Éligibilité - Effectif minimal",
       "description": "Nombre de salariés minimum requis pour qu'une entreprise puisse bénéficier de l'aide.",
