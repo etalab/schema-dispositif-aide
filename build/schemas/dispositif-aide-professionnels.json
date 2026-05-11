@@ -195,6 +195,13 @@
       }
     },
     {
+      "name": "bases_juridiques",
+      "title": "Bases juridiques",
+      "description": "Une liste de références vers les textes juridiques qui servent de base au dispositif d'aide. Format : liste JSON d'objets ayant obligatoirement un champ 'libelle' et un champ 'lien', afin de représenter une collection de liens hypertexte.",
+      "example": "[{ libelle: 'Arrêté n° 123456', lien: 'https://www.legifrance.fr/arrete-123456' }, { libelle: 'Règlement de minimis', lien: 'https://europa.eu/reglement-de-minimis' }]",
+      "type": "string"
+    },
+    {
       "name": "eligibilite_effectifs_minimum",
       "title": "Éligibilité - Effectif minimal",
       "description": "Nombre de salariés minimum requis pour qu'une entreprise puisse bénéficier de l'aide.",
@@ -259,9 +266,9 @@
     },
     {
       "name": "chainage_paiement",
-      "title": "Chaînage avec une demande de paiement",
-      "description": "Description du chaînage entre le présent dispositif (étude d'éligibilité, instruction) et le ou les dispositifs/guichets sur lesquels la demande de paiement doit ensuite être déposée. Permet d'identifier les dispositifs liés en aval lorsque l'instruction et le paiement sont gérés séparément.",
-      "example": "Après validation de l'éligibilité via ce dispositif, la demande de paiement doit être déposée sur le dispositif DSP000123",
+      "title": "ID de l'aide dont ce dispositif est la demande de paiement",
+      "description": "Certaines aides sont découpées en deux dispositifs distincts : celui de l'étude d'éligibilité, et celui de la demande de paiement, qui est toujours publié plus tard. Ce champ sert donc à retrouver, pour un dispositif de demande de paiement, le dispositif d'étude d'éligibilité concerné. Il contient l'identifiant dudit dispositif.",
+      "example": "DSP000123",
       "type": "string"
     }
   ]
