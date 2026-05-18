@@ -230,16 +230,16 @@
       "type": "integer"
     },
     {
-      "name": "eligibilite_statut_juridique",
+      "name": "eligibilite_forme_juridique",
       "title": "Éligibilité - Forme juridique",
       "description": "Liste des formes juridiques (entreprises individuelles, sociétés, formes de regroupement) éligibles au dispositif. La liste de référence des valeurs autorisées est tenue à jour dans la table dédiée à la gestion du schéma. Format : valeurs autorisées séparées par des pipes : valeur1|valeur2.",
       "example": "EI|Microentrepreneur|EURL|SASU|SARL|SAS|SA|SNC|SCS|SCA|SICA|GAEC|GIE",
       "type": "string"
     },
     {
-      "name": "eligibilite_statut_juridique_exclusions",
+      "name": "eligibilite_forme_juridique_exclusions",
       "title": "Éligibilité - Forme juridique - Exclusions",
-      "description": "Formes juridiques explicitement exclues du dispositif d'aide. Cette propriété a précédence sur \"eligibilite_statut_juridique\" s'il y a recouvrement. Format : valeurs autorisées séparées par des pipes : valeur1|valeur2.",
+      "description": "Formes juridiques explicitement exclues du dispositif d'aide. Cette propriété a précédence sur \"eligibilite_forme_juridique\" s'il y a recouvrement. Format : valeurs autorisées séparées par des pipes : valeur1|valeur2.",
       "example": "Microentrepreneur|EI",
       "type": "string"
     },
@@ -248,7 +248,10 @@
       "title": "Secteurs d'activité concernés",
       "description": "Secteurs d'activité prioritairement ciblés par le dispositif. Mettre \"tous secteurs d'activités\" si le dispositif n'est pas restreint à des secteurs particuliers. La nomenclature de référence est en cours de définition : utiliser pour l'instant soit des libellés de secteurs courants (agriculture, IAA, services, industrie...). Format : valeurs séparées par des pipes : valeur1|valeur2.",
       "example": "agriculture|IAA|services",
-      "type": "string"
+      "type": "string",
+      "constraints": {
+        "required": true
+      }
     },
     {
       "name": "ciblage_naf",
