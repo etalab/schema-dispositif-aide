@@ -162,7 +162,7 @@
     },
     {
       "name": "eligibilite_geographique_exclusions",
-      "title": "Couverture géographique de l’aide - exclusions",
+      "title": "Couverture géographique de l’aide - Exclusions",
       "description": "Aires géographique exclues du dispositif. Cette propriété a précédence sur les \"eligibilite_geographique\" s'il y a recouvrement. Champ à écrire en utilisant le formalisme du Code Officiel Géographique : https: //www.insee.fr/fr/information/5230987. Séparer chaque code COG par des pipes.",
       "example": "REG-84|DEP-01|COM-83141",
       "type": "string",
