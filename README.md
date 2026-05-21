@@ -23,10 +23,10 @@ Enfin, il pourrait être pertinent de faire un lien entre un dispositif d'aide e
 ## Format des fichiers
 
 Le fichier doit être au format csv, encodé en UTF-8. L'en-tête de colonne sur la première ligne est obligatoire.
-Pour publier facilement un dispositif d'aide, il est possible d'utiliser le lien suviant : https://publier.etalab.studio/fr/select?schema=etalab%2Fschema-dispositif-aide
+Pour publier facilement un dispositif d'aide, il est possible d'utiliser [l’outil de publication de data.gouv.fr](https://publier.etalab.studio/fr/select?schema=etalab%2Fschema-dispositif-aide).
 
 ## Gestion du schéma
 
-La gestion du schéma est centralisée sur le fichier grist suivant : https://grist.numerique.gouv.fr/o/docs/uC2J5niqzb48/Gestion-des-schemas-des-dispositifs-daide
+La gestion du schéma est centralisée sur [ce fichier grist](https://grist.numerique.gouv.fr/o/docs/uC2J5niqzb48/Gestion-des-schemas-des-dispositifs-daide).
 Ce fichier est librement accessible en lecture. Vous y trouverez notamment les listes de valeurs autorisées pour les champs sur lesquels des contraintes ont été imposées. 
 Vous y trouverez également un lien vers un channel de discussion si vous souhaitez participer au développement de ce schéma. 

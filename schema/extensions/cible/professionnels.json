@@ -1,0 +1,96 @@
+{
+  "name": "professionnels",
+  "title": "Extension du schéma des dispositifs d'aides pour les aides dédiées aux professionnels",
+  "description": "Ajout de champs permettant de préciser l'éligibilité des entreprises aux différents dispositifs d'aides ainsi que les informations administratives nécessaires à leur instruction (référents internes, base juridique, chaînage avec une demande de paiement).",
+  "fields": [
+    {
+      "name": "base_juridique",
+      "title": "Bases juridiques",
+      "description": "Une liste de références vers les textes juridiques qui servent de base au dispositif d'aide. Format : liste JSON d'objets ayant obligatoirement un champ 'libelle' et un champ 'lien', afin de représenter une collection de liens hypertexte.",
+      "example": "[{ libelle: 'Arrêté n° 123456', lien: 'https://www.legifrance.fr/arrete-123456' }, { libelle: 'Règlement de minimis', lien: 'https://europa.eu/reglement-de-minimis' }]",
+      "type": "string"
+    },
+    {
+      "name": "eligibilite_effectif_minimal",
+      "title": "Éligibilité - Effectif minimal",
+      "description": "Nombre de salariés minimum requis pour qu'une entreprise puisse bénéficier de l'aide.",
+      "example": "10",
+      "type": "integer"
+    },
+    {
+      "name": "eligibilite_effectif_maximal",
+      "title": "Éligibilité - Effectif maximal",
+      "description": "Nombre de salariés maximum au-delà duquel une entreprise n'est plus éligible à l'aide.",
+      "example": "249",
+      "type": "integer"
+    },
+    {
+      "name": "eligibilite_categorie_taille_entreprise",
+      "title": "Éligibilité - Catégories de taille d'entreprise",
+      "description": "Catégories d'entreprises éligibles, telles que définies par l'INSEE : https://www.insee.fr/fr/metadonnees/definition/c1057. À utiliser uniquement lorsque l'éligibilité s'appuie sur les seuils combinés (effectif et critères financiers) plutôt que sur le seul effectif. Choix multiples parmi MIC (microentreprise), PME (petite et moyenne entreprise), ETI (entreprise de taille intermédiaire), GE (grande entreprise). Format : valeurs autorisées séparées par des pipes : valeur1|valeur2.",
+      "example": "MIC|PME|ETI|GE",
+      "type": "string",
+      "constraints": {
+        "pattern": "^(MIC|PME|ETI|GE)(\\|(MIC|PME|ETI|GE))*$"
+      }
+    },
+    {
+      "name": "eligibilite_annees_existence_minimal",
+      "title": "Éligibilité - Nombre d'années d'existence minimal",
+      "description": "Nombre d'années d'existence minimale (en années) requise pour qu'une entreprise puisse bénéficier de l'aide.",
+      "example": "2",
+      "type": "integer"
+    },
+    {
+      "name": "eligibilite_forme_juridique",
+      "title": "Éligibilité - Formes juridiques éligibles",
+      "description": "Liste des formes juridiques (entreprises individuelles, sociétés, formes de regroupement) éligibles au dispositif. La liste de référence des valeurs autorisées est tenue à jour dans la table dédiée à la gestion du schéma. Format : valeurs autorisées séparées par des pipes : valeur1|valeur2.",
+      "example": "EI|Microentrepreneur|EURL|SASU|SARL|SAS|SA|SNC|SCS|SCA|SICA|GAEC|GIE",
+      "type": "string"
+    },
+    {
+      "name": "eligibilite_forme_juridique_exclusions",
+      "title": "Éligibilité - Formes juridiques - Exclusions",
+      "description": "Formes juridiques explicitement exclues du dispositif d'aide. Cette propriété a précédence sur \"eligibilite_forme_juridique\" s'il y a recouvrement. Format : valeurs autorisées séparées par des pipes : valeur1|valeur2.",
+      "example": "Microentrepreneur|EI",
+      "type": "string"
+    },
+    {
+      "name": "ciblage_secteur_activite",
+      "title": "Secteurs d'activité principalement concernés",
+      "description": "Secteurs d'activité prioritairement ciblés par le dispositif. Mettre \"tous secteurs d'activité\" si le dispositif n'est pas restreint à des secteurs particuliers. La nomenclature de référence est en cours de définition : utiliser pour l'instant soit des libellés de secteurs courants (agriculture, IAA, services, industrie...). Format : valeurs séparées par des pipes : valeur1|valeur2.",
+      "example": "agriculture|IAA|services",
+      "type": "string",
+      "constraints": {
+        "required": true
+      }
+    },
+    {
+      "name": "ciblage_naf",
+      "title": "Ciblage - NAF",
+      "description": "Liste de codes NAF prioritairement ciblés par l'aide. Tous les niveaux de granularité du NAF sont acceptés (section lettre, division, groupe, classe, sous-classe). Format : valeurs autorisées séparées par des pipes : valeur1|valeur2.",
+      "example": "A|B|C|55|56.1|74.10|10.11Z",
+      "type": "string",
+      "constraints": {
+        "pattern": "^([A-U]|\\d{2}|\\d{2}\\.\\d|\\d{2}\\.\\d{2}|\\d{2}\\.\\d{2}[A-Z])(\\|([A-U]|\\d{2}|\\d{2}\\.\\d|\\d{2}\\.\\d{2}|\\d{2}\\.\\d{2}[A-Z]))*$"
+      }
+    },
+    {
+      "name": "ciblage_naf_exclusions",
+      "title": "Ciblage - NAF - Exclusions",
+      "description": "Liste de codes NAF explicitement exclus du dispositif d'aide. Cette propriété a précédence sur \"ciblage_naf\" s'il y a recouvrement. Tous les niveaux de granularité du NAF sont acceptés. Format : valeurs autorisées séparées par des pipes : valeur1|valeur2.",
+      "example": "A|B|C|55|56.1|74.10|10.11Z",
+      "type": "string",
+      "constraints": {
+        "pattern": "^([A-U]|\\d{2}|\\d{2}\\.\\d|\\d{2}\\.\\d{2}|\\d{2}\\.\\d{2}[A-Z])(\\|([A-U]|\\d{2}|\\d{2}\\.\\d|\\d{2}\\.\\d{2}|\\d{2}\\.\\d{2}[A-Z]))*$"
+      }
+    },
+    {
+      "name": "chainage_paiement",
+      "title": "ID de l'aide dont ce dispositif est la demande de paiement",
+      "description": "Certaines aides sont découpées en deux dispositifs distincts : celui de l'étude d'éligibilité, et celui de la demande de paiement, qui est toujours publié plus tard. Ce champ sert donc à retrouver, pour un dispositif de demande de paiement, le dispositif d'étude d'éligibilité concerné. Il contient l'identifiant dudit dispositif.",
+      "example": "DSP000123",
+      "type": "string"
+    }
+  ]
+}
