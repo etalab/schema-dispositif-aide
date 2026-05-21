@@ -23,7 +23,7 @@ Enfin, il pourrait être pertinent de faire un lien entre un dispositif d'aide e
 ## Format des fichiers
 
 Le fichier doit être au format csv, encodé en UTF-8. L'en-tête de colonne sur la première ligne est obligatoire.
-Pour publier facilement un dispositif d'aide, il est possible d'utiliser [l’outil de publication d’Etalab](https://publier.etalab.studio/fr/select?schema=etalab%2Fschema-dispositif-aide).
+Pour publier facilement un dispositif d'aide, il est possible d'utiliser [l’outil de publication de data.gouv.fr](https://publier.etalab.studio/fr/select?schema=etalab%2Fschema-dispositif-aide).
 
 ## Gestion du schéma
 
