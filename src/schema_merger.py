@@ -142,6 +142,30 @@ class SchemaMerger:
         return merged_fields, conflicts, warnings
 
     @staticmethod
+    def merge_contributors(core_schema: dict, extensions: list[dict]) -> list[dict]:
+        """
+        Resolve the `contributors` of a generated schema.
+
+        The core lists technical contributors; an extension may instead declare
+        the contributors relevant to its specific schema. When at least
+        one extension defines `contributors`, those override the core entirely.
+        When no extension defines any, the core
+        contributors are kept as the fallback.
+        """
+        merged = []
+        seen = set()
+        for extension in extensions:
+            for contributor in extension.get("contributors", []):
+                key = contributor.get("email") or contributor.get("title")
+                if key in seen:
+                    continue
+                seen.add(key)
+                merged.append(contributor)
+        if merged:
+            return merged
+        return list(core_schema.get("contributors", []))
+
+    @staticmethod
     def combine_schemas(
         core_schema: dict,
         usage_extensions: list[dict] = None,
@@ -175,5 +199,12 @@ class SchemaMerger:
 
         merged_fields, conflicts, warnings = SchemaMerger.merge_fields(fields_by_name)
         merged_schema["fields"] = merged_fields
+
+        extensions = list(usage_extensions or [])
+        if cible_extension:
+            extensions.append(cible_extension)
+        merged_contributors = SchemaMerger.merge_contributors(core_schema, extensions)
+        if merged_contributors:
+            merged_schema["contributors"] = merged_contributors
 
         return merged_schema, conflicts, warnings

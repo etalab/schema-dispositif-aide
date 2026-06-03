@@ -13,6 +13,16 @@
       "encoding": "utf-8",
       "schema": "build/schemas/dispositif-aide.json",
       "documentation": "README.md"
+    },
+    {
+      "name": "dispositif-aide-professionnels",
+      "path": "build/exemples/par_schema/exemple-dispositif-aide-professionnels.csv",
+      "profile": "tabular-data-resource",
+      "format": "csv",
+      "mediatype": "text/csv",
+      "encoding": "utf-8",
+      "schema": "build/schemas/dispositif-aide-professionnels.json",
+      "documentation": "README.md"
     }
   ]
 }

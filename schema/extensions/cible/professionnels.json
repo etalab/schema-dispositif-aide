@@ -2,6 +2,26 @@
   "name": "professionnels",
   "title": "Extension du schéma des dispositifs d'aides pour les aides dédiées aux professionnels",
   "description": "Ajout de champs permettant de préciser l'éligibilité des entreprises aux différents dispositifs d'aides ainsi que les informations administratives nécessaires à leur instruction (référents internes, base juridique, chaînage avec une demande de paiement).",
+    "contributors": [
+      {
+        "title": "Jean-Baptiste Le Devehat",
+        "email": "jeanbaptiste.ledevehat.ext@ademe.fr",
+        "organisation": "ADEME Extérieur - Transition écologique des entreprises",
+        "role": "contributor"
+      },
+      {
+        "title": "Béatrice Neyrac",
+        "email": "beatrice.neyrac@agriculture.gouv.fr",
+        "organisation": "Ministère de l’Agriculture, de l’Agro-alimentaire et de la Souveraineté alimentaire",
+        "role": "contributor"
+      },
+      {
+        "title": "Stéphanie Pouliquen",
+        "email": "pouliquen@cma-france.fr",
+        "organisation": "CMA France",
+        "role": "contributor"
+      }
+    ],
   "fields": [
     {
       "name": "base_juridique",
@@ -46,14 +66,20 @@
       "title": "Éligibilité - Formes juridiques éligibles",
       "description": "Liste des formes juridiques (entreprises individuelles, sociétés, formes de regroupement) éligibles au dispositif. La liste de référence des valeurs autorisées est tenue à jour dans la table dédiée à la gestion du schéma. Format : valeurs autorisées séparées par des pipes : valeur1|valeur2.",
       "example": "EI|Microentrepreneur|EURL|SASU|SARL|SAS|SA|SNC|SCS|SCA|SICA|GAEC|GIE",
-      "type": "string"
+      "type": "string",
+      "constraints": {
+        "pattern": "^[^|]+(\\|[^|]+)*$"
+      }
     },
     {
       "name": "eligibilite_forme_juridique_exclusions",
       "title": "Éligibilité - Formes juridiques - Exclusions",
       "description": "Formes juridiques explicitement exclues du dispositif d'aide. Cette propriété a précédence sur \"eligibilite_forme_juridique\" s'il y a recouvrement. Format : valeurs autorisées séparées par des pipes : valeur1|valeur2.",
       "example": "Microentrepreneur|EI",
-      "type": "string"
+      "type": "string",
+      "constraints": {
+        "pattern": "^[^|]+(\\|[^|]+)*$"
+      }
     },
     {
       "name": "ciblage_secteur_activite",
@@ -62,7 +88,8 @@
       "example": "agriculture|IAA|services",
       "type": "string",
       "constraints": {
-        "required": true
+        "required": true,
+        "pattern": "^[^|]+(\\|[^|]+)*$"
       }
     },
     {
