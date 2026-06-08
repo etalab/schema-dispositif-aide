@@ -8,4 +8,4 @@ Publication initiale du schéma coeur.
 
 ## Version 0.2.0 - 2026-06-08
 
-Publication intiale du sous-schéma dédié aux entreprises.
+Publication initiale du sous-schéma dédié aux entreprises.
