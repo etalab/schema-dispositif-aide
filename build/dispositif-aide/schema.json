@@ -1,15 +1,15 @@
 {
   "$schema": "https://specs.frictionlessdata.io/schemas/table-schema.json",
-  "name": "dispositif-aide-activation-pilotage",
-  "title": "Dispositifs d'aides (activation, pilotage)",
-  "description": "Extension du schéma dispositif-aide avec les extensions d'usage : activation, pilotage",
+  "name": "dispositif-aide",
+  "title": "Dispositifs d'aides",
+  "description": "Spécification du fichier d'échange relatif aux dispositifs d'aides.",
   "keywords": [
     "dispositifs",
     "aide"
   ],
   "countryCode": "FR",
   "homepage": "https://github.com/etalab/schema-dispositif-aide",
-  "path": "https://github.com/etalab/schema-dispositif-aide/raw/v0.2.0/build/schemas/dispositif-aide-activation-pilotage.json",
+  "path": "https://github.com/etalab/schema-dispositif-aide/raw/v0.2.0/build/dispositif-aide/schema.json",
   "licenses": [
     {
       "title": "Etalab Licence Ouverte 2.0",
@@ -20,13 +20,13 @@
   "resources": [
     {
       "title": "Fichier de validation (CSV)",
-      "name": "exemple-dispositif-aide-activation-pilotage-csv",
-      "path": "exemples/exemple-dispositif-aide-activation-pilotage.csv"
+      "name": "exemple-csv",
+      "path": "https://github.com/etalab/schema-dispositif-aide/raw/v0.2.0/build/dispositif-aide/exemple.csv"
     }
   ],
   "sources": [],
-  "created": "2022-03-14T00:00:00Z",
-  "lastModified": "2025-09-12T00:00:00Z",
+  "created": "2022-03-14",
+  "lastModified": "2026-06-08",
   "version": "v0.2.0",
   "contributors": [
     {
@@ -162,7 +162,7 @@
     },
     {
       "name": "eligibilite_geographique_exclusions",
-      "title": "Couverture géographique de l’aide - exclusions",
+      "title": "Couverture géographique de l’aide - Exclusions",
       "description": "Aires géographique exclues du dispositif. Cette propriété a précédence sur les \"eligibilite_geographique\" s'il y a recouvrement. Champ à écrire en utilisant le formalisme du Code Officiel Géographique : https: //www.insee.fr/fr/information/5230987. Séparer chaque code COG par des pipes.",
       "example": "REG-84|DEP-01|COM-83141",
       "type": "string",
@@ -193,79 +193,6 @@
       "constraints": {
         "required": true
       }
-    },
-    {
-      "name": "objectif1",
-      "title": "Objectif 1",
-      "description": "Premier objectif du dispositif",
-      "example": "Réduire les émissions de CO2",
-      "type": "string"
-    },
-    {
-      "name": "lien1",
-      "title": "Lien 1",
-      "description": "URL associée au premier objectif",
-      "example": "https://exemple.gouv.fr/objectif1",
-      "type": "string",
-      "format": "uri"
-    },
-    {
-      "name": "texte_lien1",
-      "title": "Texte du lien 1",
-      "description": "Texte descriptif du premier lien",
-      "example": "En savoir plus sur l'objectif 1",
-      "type": "string"
-    },
-    {
-      "name": "objectif2",
-      "title": "Objectif 2",
-      "description": "Deuxième objectif du dispositif",
-      "example": "Améliorer l'efficacité énergétique",
-      "type": "string"
-    },
-    {
-      "name": "lien2",
-      "title": "Lien 2",
-      "description": "URL associée au deuxième objectif",
-      "example": "https://exemple.gouv.fr/objectif2",
-      "type": "string",
-      "format": "uri"
-    },
-    {
-      "name": "texte_lien2",
-      "title": "Texte du lien 2",
-      "description": "Texte descriptif du deuxième lien",
-      "example": "En savoir plus sur l'objectif 2",
-      "type": "string"
-    },
-    {
-      "name": "objectif3",
-      "title": "Objectif 3",
-      "description": "Troisième objectif du dispositif",
-      "example": "Promouvoir les énergies renouvelables",
-      "type": "string"
-    },
-    {
-      "name": "lien3",
-      "title": "Lien 3",
-      "description": "URL associée au troisième objectif",
-      "example": "https://exemple.gouv.fr/objectif3",
-      "type": "string",
-      "format": "uri"
-    },
-    {
-      "name": "texte_lien3",
-      "title": "Texte du lien 3",
-      "description": "Texte descriptif du troisième lien",
-      "example": "En savoir plus sur l'objectif 3",
-      "type": "string"
-    },
-    {
-      "name": "budget_total_alloue",
-      "title": "Budget total alloué",
-      "description": "Budget total alloué au dispositif en euros",
-      "example": "1000000",
-      "type": "number"
     }
   ]
 }

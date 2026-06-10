@@ -8,10 +8,16 @@ SCHEMA_CORE = SCHEMA_DIR / "core" / "schema-core.json"
 SCHEMA_EXTENSIONS = SCHEMA_DIR / "extensions"
 
 # --- build outputs (relative to repo root) ---
-BUILD_SCHEMAS = Path("build") / "schemas"
-BUILD_EXEMPLES = Path("build") / "exemples"
-BUILD_EXEMPLES_PAR_SCHEMA = BUILD_EXEMPLES / "par_schema"
+BUILD_DIR = Path("build")
 DATAPACKAGE = Path("datapackage.json")
+
+# --- per-schema filenames (inside build/<name>/) ---
+SCHEMA_FILENAME = "schema.json"
+EXEMPLE_FILENAME = "exemple.csv"
+DOCUMENTATION = "README.md"
+
+# Convenience "all fields" example, kept at the build root (not a schema dir).
+EXEMPLE_COMPLET_CSV = "exemple-complet.csv"
 
 # --- schema naming ---
 BASE_NAME = "dispositif-aide"
@@ -24,26 +30,28 @@ DATAPACKAGE_DESC = "Schémas de données permettant de décrire plus ou moins pr
 
 # --- resource metadata ---
 RESOURCE_CSV_LABEL = "Fichier de validation (CSV)"
-EXEMPLE_COMPLET_CSV = "exemple-complet.csv"
-DOCUMENTATION = "README.md"
 
 
-def csv_filename(name: str) -> str:
-    """Canonical CSV example filename."""
-    return f"exemple-{name}.csv"
+def schema_subdir(name: str) -> Path:
+    """Directory holding one schema's artifacts (relative to repo root)."""
+    return BUILD_DIR / name
 
 
-def schema_resource_name(name: str) -> str:
-    """Frictionless resource name for a schema's CSV example."""
-    return f"{csv_filename(name).removesuffix('.csv')}-csv"
+def schema_json_path(name: str) -> Path:
+    """Path to a schema's JSON file (relative to repo root)."""
+    return schema_subdir(name) / SCHEMA_FILENAME
 
 
-def schema_resource_csv_path(name: str) -> str:
-    """CSV path embedded in a schema resource (relative to build/)."""
-    rel = BUILD_EXEMPLES_PAR_SCHEMA.relative_to(BUILD_SCHEMAS.parent)
-    return (rel / csv_filename(name)).as_posix()
+def exemple_path(name: str) -> Path:
+    """Path to a schema's example CSV (relative to repo root)."""
+    return schema_subdir(name) / EXEMPLE_FILENAME
 
 
-def datapackage_csv_path(name: str) -> str:
-    """CSV path embedded in datapackage.json (relative to repo root)."""
-    return (BUILD_EXEMPLES_PAR_SCHEMA / csv_filename(name)).as_posix()
+def readme_path(name: str) -> Path:
+    """Path to a schema's README homepage (relative to repo root)."""
+    return schema_subdir(name) / DOCUMENTATION
+
+
+def schema_resource_name() -> str:
+    """Frictionless resource name for a schema's CSV example (e.g. ``exemple-csv``)."""
+    return EXEMPLE_FILENAME.replace(".", "-")

@@ -1,15 +1,15 @@
 {
   "$schema": "https://specs.frictionlessdata.io/schemas/table-schema.json",
-  "name": "dispositif-aide-professionnels",
-  "title": "Dispositifs d'aides pour les professionnels",
-  "description": "Extension du schéma dispositif-aide pour la cible 'professionnels'",
+  "name": "dispositif-aide",
+  "title": "Dispositifs d'aides",
+  "description": "Spécification du fichier d'échange relatif aux dispositifs d'aides.",
   "keywords": [
     "dispositifs",
     "aide"
   ],
   "countryCode": "FR",
   "homepage": "https://github.com/etalab/schema-dispositif-aide",
-  "path": "https://github.com/etalab/schema-dispositif-aide/raw/v0.2.0/build/schemas/dispositif-aide-professionnels.json",
+  "path": "https://github.com/etalab/schema-dispositif-aide/raw/v0.2.0/build/dispositif-aide/schema.json",
   "licenses": [
     {
       "title": "Etalab Licence Ouverte 2.0",
@@ -20,13 +20,13 @@
   "resources": [
     {
       "title": "Fichier de validation (CSV)",
-      "name": "exemple-dispositif-aide-professionnels-csv",
-      "path": "exemples/exemple-dispositif-aide-professionnels.csv"
+      "name": "exemple-csv",
+      "path": "https://github.com/etalab/schema-dispositif-aide/raw/v0.2.0/build/dispositif-aide/exemple.csv"
     }
   ],
   "sources": [],
-  "created": "2022-03-14T00:00:00Z",
-  "lastModified": "2025-09-12T00:00:00Z",
+  "created": "2022-03-14",
+  "lastModified": "2026-06-08",
   "version": "v0.2.0",
   "contributors": [
     {
@@ -193,69 +193,6 @@
       "constraints": {
         "required": true
       }
-    },
-    {
-      "name": "taille_entreprise",
-      "title": "Taille d'entreprise acceptée",
-      "description": "Taille d'entreprise acceptable (TPE, PME, ETI, GE)",
-      "example": "tpe|pme|eti|ge",
-      "type": "string"
-    },
-    {
-      "name": "effectifs_minimum",
-      "title": "Nombre d'effectifs minimum",
-      "description": "Nombre d'employés minimum requis",
-      "example": "0",
-      "type": "integer"
-    },
-    {
-      "name": "effectifs_maximum",
-      "title": "Nombre d'effectifs maximum",
-      "description": "Nombre d'employés maximum autorisé",
-      "example": "250",
-      "type": "integer"
-    },
-    {
-      "name": "secteurs_activite",
-      "title": "Secteurs d'activité acceptés",
-      "description": "Codes NAF ou libellés des secteurs acceptés",
-      "example": "70.10Z|71.11Z",
-      "type": "string"
-    },
-    {
-      "name": "chiffre_affaires_minimum",
-      "title": "Chiffre d'affaires minimum",
-      "description": "Chiffre d'affaires minimum requis en euros",
-      "example": "100000",
-      "type": "number"
-    },
-    {
-      "name": "chiffre_affaires_maximum",
-      "title": "Chiffre d'affaires maximum",
-      "description": "Chiffre d'affaires maximum autorisé en euros",
-      "example": "50000000",
-      "type": "number"
-    },
-    {
-      "name": "statut_juridique",
-      "title": "Statuts juridiques acceptés",
-      "description": "Formes juridiques pouvant candidater",
-      "example": "sarl|sas|sa|eirl|auto_entrepreneur",
-      "type": "string"
-    },
-    {
-      "name": "secteur_public_exclusion",
-      "title": "Exclusion secteur public",
-      "description": "Les entreprises publiques peuvent-elles candidater?",
-      "example": "oui|non",
-      "type": "string"
-    },
-    {
-      "name": "anciennete_minimum_mois",
-      "title": "Ancienneté minimum (mois)",
-      "description": "Nombre de mois minimum d'existence requis",
-      "example": "24",
-      "type": "integer"
     }
   ]
 }

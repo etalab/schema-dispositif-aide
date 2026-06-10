@@ -11,8 +11,7 @@ class ExampleGenerator:
 
     def __init__(self, repo_root: Path):
         self.repo_root = repo_root
-        self.examples_dir = repo_root / constants.BUILD_EXEMPLES
-        self.schemas_examples_dir = repo_root / constants.BUILD_EXEMPLES_PAR_SCHEMA
+        self.build_dir = repo_root / constants.BUILD_DIR
 
     def extract_examples_from_schemas(
         self, schemas_for_csv: list[tuple[str, list[str]]], schemas: dict[str, dict]
@@ -43,10 +42,10 @@ class ExampleGenerator:
     ) -> None:
         """Generate a CSV file for each schema with only its fields."""
         examples = self.extract_examples_from_schemas(schemas_for_csv, schemas)
-        self.schemas_examples_dir.mkdir(parents=True, exist_ok=True)
 
         for schema_name, field_names in schemas_for_csv:
-            csv_path = self.schemas_examples_dir / constants.csv_filename(schema_name)
+            csv_path = self.repo_root / constants.exemple_path(schema_name)
+            csv_path.parent.mkdir(parents=True, exist_ok=True)
             missing = [f for f in field_names if f not in examples]
             if missing:
                 print(
@@ -78,7 +77,8 @@ class ExampleGenerator:
             return
 
         example_row = {field: examples.get(field, "") for field in all_fields}
-        csv_path = self.examples_dir / constants.EXEMPLE_COMPLET_CSV
+        csv_path = self.build_dir / constants.EXEMPLE_COMPLET_CSV
+        csv_path.parent.mkdir(parents=True, exist_ok=True)
 
         with open(csv_path, "w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=all_fields)

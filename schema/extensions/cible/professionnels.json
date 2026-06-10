@@ -1,7 +1,7 @@
 {
   "name": "professionnels",
   "title": "Extension du schéma des dispositifs d'aides pour les aides dédiées aux professionnels",
-  "description": "Ajout de champs permettant de préciser l'éligibilité des entreprises aux différents dispositifs d'aides ainsi que les informations administratives nécessaires à leur instruction (référents internes, base juridique, chaînage avec une demande de paiement).",
+  "description": "Ajout de champs permettant de préciser l'éligibilité des entreprises aux différents dispositifs d'aides ainsi que les informations administratives nécessaires à leur instruction (base juridique, chaînage avec une demande de paiement).",
     "contributors": [
       {
         "title": "Jean-Baptiste Le Devehat",

@@ -1,15 +1,15 @@
 {
   "$schema": "https://specs.frictionlessdata.io/schemas/table-schema.json",
-  "name": "dispositif-aide",
-  "title": "Dispositifs d'aides",
-  "description": "Spécification du fichier d'échange relatif aux dispositifs d'aides.",
+  "name": "dispositif-aide-pilotage",
+  "title": "Dispositifs d'aides (pilotage)",
+  "description": "Extension du schéma dispositif-aide avec les extensions d'usage : pilotage",
   "keywords": [
     "dispositifs",
     "aide"
   ],
   "countryCode": "FR",
   "homepage": "https://github.com/etalab/schema-dispositif-aide",
-  "path": "https://github.com/etalab/schema-dispositif-aide/raw/v0.2.0/build/schemas/dispositif-aide.json",
+  "path": "https://github.com/etalab/schema-dispositif-aide/raw/v0.2.0/build/dispositif-aide-pilotage/schema.json",
   "licenses": [
     {
       "title": "Etalab Licence Ouverte 2.0",
@@ -20,8 +20,8 @@
   "resources": [
     {
       "title": "Fichier de validation (CSV)",
-      "name": "exemple-dispositif-aide-csv",
-      "path": "exemples/par_schema/exemple-dispositif-aide.csv"
+      "name": "exemple-csv",
+      "path": "https://github.com/etalab/schema-dispositif-aide/raw/v0.2.0/build/dispositif-aide-pilotage/exemple.csv"
     }
   ],
   "sources": [],
@@ -162,7 +162,7 @@
     },
     {
       "name": "eligibilite_geographique_exclusions",
-      "title": "Couverture géographique de l’aide - Exclusions",
+      "title": "Couverture géographique de l’aide - exclusions",
       "description": "Aires géographique exclues du dispositif. Cette propriété a précédence sur les \"eligibilite_geographique\" s'il y a recouvrement. Champ à écrire en utilisant le formalisme du Code Officiel Géographique : https: //www.insee.fr/fr/information/5230987. Séparer chaque code COG par des pipes.",
       "example": "REG-84|DEP-01|COM-83141",
       "type": "string",
@@ -193,6 +193,13 @@
       "constraints": {
         "required": true
       }
+    },
+    {
+      "name": "budget_total_alloue",
+      "title": "Budget total alloué",
+      "description": "Budget total alloué au dispositif en euros",
+      "example": "1000000",
+      "type": "number"
     }
   ]
 }

@@ -9,7 +9,7 @@
   ],
   "countryCode": "FR",
   "homepage": "https://github.com/etalab/schema-dispositif-aide",
-  "path": "https://github.com/etalab/schema-dispositif-aide/raw/v0.2.0/build/schemas/dispositif-aide.json",
+  "path": "https://github.com/etalab/schema-dispositif-aide/raw/v0.2.0/build/dispositif-aide/schema.json",
   "licenses": [
     {
       "title": "Etalab Licence Ouverte 2.0",

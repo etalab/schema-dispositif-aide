@@ -9,10 +9,13 @@ sys.path.insert(0, str(Path(__file__).parent))
 import constants
 from frictionless import validate
 
-schemas_dir = constants.BUILD_SCHEMAS
+build_dir = constants.BUILD_DIR
 root_datapackage = constants.DATAPACKAGE
 
-if not schemas_dir.exists():
+# Each schema lives in build/<name>/schema.json alongside its exemple.csv.
+schema_files = sorted(build_dir.glob(f"*/{constants.SCHEMA_FILENAME}"))
+
+if not schema_files:
     print("❌ Aucun schéma généré. Exécutez d'abord : python3 src/build_schemas.py")
     exit(1)
 
@@ -44,26 +47,26 @@ else:
         invalid += 1
 
 print("\n--- Détail des validations des schémas ---")
-for schema_file in sorted(schemas_dir.glob("*.json")):
+for schema_file in schema_files:
+    label = f"{schema_file.parent.name}/{schema_file.name}"
     try:
-        check(validate(str(schema_file), type="schema"), schema_file.name)
+        check(validate(str(schema_file), type="schema"), label)
     except Exception as e:
-        print(f"❌ {schema_file.name}: {e}")
+        print(f"❌ {label}: {e}")
         invalid += 1
 
 print("\n--- Détail des validations des exemples CSV contre leur schéma ---")
-for schema_file in sorted(schemas_dir.glob("*.json")):
-    csv_file = constants.BUILD_EXEMPLES_PAR_SCHEMA / constants.csv_filename(
-        schema_file.stem
-    )
+for schema_file in schema_files:
+    csv_file = schema_file.parent / constants.EXEMPLE_FILENAME
+    label = f"{schema_file.parent.name}/{csv_file.name}"
     if not csv_file.exists():
-        print(f"❌ {csv_file.name}: fichier exemple introuvable")
+        print(f"❌ {label}: fichier exemple introuvable")
         invalid += 1
         continue
     try:
-        check(validate(str(csv_file), schema=str(schema_file)), csv_file.name)
+        check(validate(str(csv_file), schema=str(schema_file)), label)
     except Exception as e:
-        print(f"❌ {csv_file.name}: {e}")
+        print(f"❌ {label}: {e}")
         invalid += 1
 
 print(f"\nRésumé: {valid} tests valides, {invalid} invalides")
