@@ -56,13 +56,12 @@ class SchemaBuilder:
         warnings: list = []
         schemas_for_csv: list[SchemaEntry] = []
         generated_schemas: dict = {}
-        known_cibles = list(cible_extensions.keys())
 
         # 1. Core only
         core_name = self.generate_schema_name()
         core_schema_copy = copy.deepcopy(core_schema)
         table_schema = SchemaBuilder.to_table_schema(
-            core_schema_copy, schema_name=core_name, known_cibles=known_cibles
+            core_schema_copy, schema_name=core_name
         )
         SchemaRepository.save_schema(
             table_schema, self.repo_root / constants.schema_json_path(core_name)
@@ -87,14 +86,13 @@ class SchemaBuilder:
             self._build_and_save(
                 schema_name,
                 merged_schema,
-                known_cibles,
                 conflicts,
                 warnings,
                 schemas_for_csv,
                 generated_schemas,
                 c_conflicts,
                 c_warnings,
-                extensions=selected_usage,
+                usage_extensions=selected_usage,
             )
 
         # 3. Each cible × all usage combinations
@@ -117,14 +115,14 @@ class SchemaBuilder:
                 self._build_and_save(
                     schema_name,
                     merged_schema,
-                    known_cibles,
                     conflicts,
                     warnings,
                     schemas_for_csv,
                     generated_schemas,
                     c_conflicts,
                     c_warnings,
-                    extensions=[*(selected_usage or []), cible_extension],
+                    usage_extensions=selected_usage,
+                    cible_extension=cible_extension,
                 )
 
         generated_count = len(schemas_for_csv)
@@ -177,7 +175,11 @@ class SchemaBuilder:
 
     @staticmethod
     def to_table_schema(
-        merged_schema: dict, schema_name: str = None, known_cibles: list[str] = None
+        merged_schema: dict,
+        schema_name: str = None,
+        *,
+        cible_extension: dict = None,
+        usage_extensions: list[dict] = None,
     ) -> dict:
         """
         Adjust a merged schema into a final table schema.
@@ -185,38 +187,36 @@ class SchemaBuilder:
         The input is already a valid table schema (deep copy of core with merged fields).
         This method only overrides the fields that needs to be reedited per generated schema:
         - name, title, description, resources, path
+
+        Title and description are derived from the actual cible/usage extension
+        objects rather than by re-parsing the schema name, so they stay correct
+        even when an extension name contains a hyphen (e.g. "secteur-public").
         """
         name = schema_name or constants.BASE_NAME
         title = constants.BASE_TITLE
         description = merged_schema.get("description", "")
 
-        if schema_name and schema_name != constants.BASE_NAME:
-            parts = schema_name.replace(f"{constants.BASE_NAME}-", "").split("-")
-            cible_part = None
-            usage_parts = []
+        usage_labels = [u["name"].replace("-", " ") for u in (usage_extensions or [])]
+        cible_label = (
+            cible_extension["name"].replace("-", " ") if cible_extension else None
+        )
 
-            if parts and known_cibles and parts[0] in known_cibles:
-                cible_part = parts[0]
-                usage_parts = parts[1:]
-            else:
-                usage_parts = parts
-
+        if cible_label or usage_labels:
             title_parts = [constants.BASE_TITLE]
-            if cible_part:
-                title_parts.append(f"pour les {cible_part}")
-            if usage_parts:
-                title_parts.append(f"({', '.join(usage_parts)})")
+            if cible_label:
+                title_parts.append(f"pour les {cible_label}")
+            if usage_labels:
+                title_parts.append(f"({', '.join(usage_labels)})")
             title = " ".join(title_parts)
 
-            if cible_part or usage_parts:
-                description_parts = [f"Extension du schéma {constants.BASE_NAME}"]
-                if cible_part:
-                    description_parts.append(f"pour la cible '{cible_part}'")
-                if usage_parts:
-                    description_parts.append(
-                        f"avec les extensions d'usage : {', '.join(usage_parts)}"
-                    )
-                description = " ".join(description_parts)
+            description_parts = [f"Extension du schéma {constants.BASE_NAME}"]
+            if cible_label:
+                description_parts.append(f"pour la cible '{cible_label}'")
+            if usage_labels:
+                description_parts.append(
+                    f"avec les extensions d'usage : {', '.join(usage_labels)}"
+                )
+            description = " ".join(description_parts)
 
         table_schema = copy.deepcopy(merged_schema)
         table_schema["name"] = name
@@ -242,22 +242,26 @@ class SchemaBuilder:
         self,
         schema_name: str,
         merged_schema: dict,
-        known_cibles: list[str],
         conflicts: list,
         warnings: list,
         schemas_for_csv: list[SchemaEntry],
         generated_schemas: dict,
         combination_conflicts: list,
         combination_warnings: list,
-        extensions: list[dict],
+        usage_extensions: list[dict] = None,
+        cible_extension: dict = None,
     ) -> None:
         """Save one schema combination and accumulate results."""
         table_schema = SchemaBuilder.to_table_schema(
-            merged_schema, schema_name=schema_name, known_cibles=known_cibles
+            merged_schema,
+            schema_name=schema_name,
+            cible_extension=cible_extension,
+            usage_extensions=usage_extensions,
         )
         SchemaRepository.save_schema(
             table_schema, self.repo_root / constants.schema_json_path(schema_name)
         )
+        extensions = [*(usage_extensions or []), *([cible_extension] if cible_extension else [])]
         self.readme_gen.generate(schema_name, table_schema, extensions)
         print(f"✓ {schema_name}/")
 

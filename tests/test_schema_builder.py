@@ -28,3 +28,46 @@ class SchemaBuilderTest(unittest.TestCase):
             self.assertTrue((schema_dir / "schema.json").exists(), f"{name}/schema.json")
             self.assertTrue((schema_dir / "README.md").exists(), f"{name}/README.md")
             self.assertTrue((schema_dir / "exemple.csv").exists(), f"{name}/exemple.csv")
+
+
+class ToTableSchemaTitlingTest(unittest.TestCase):
+    """Title/description must be derived from the extension objects, not by
+    re-parsing the schema name (which breaks on hyphenated names like
+    'secteur-public')."""
+
+    CORE = {
+        "name": "dispositif-aide",
+        "path": "https://host/raw/v1/build/dispositif-aide/schema.json",
+        "fields": [],
+    }
+
+    def test_hyphenated_cible_is_categorized_as_cible_not_usages(self):
+        # GIVEN a cible extension whose name contains a hyphen
+        table = SchemaBuilder.to_table_schema(
+            self.CORE,
+            schema_name="dispositif-aide-secteur-public",
+            cible_extension={"name": "secteur-public"},
+        )
+
+        # THEN it is rendered as a target (hyphen shown as a space)...
+        self.assertEqual(table["title"], "Dispositifs d'aides pour les secteur public")
+        self.assertIn("pour la cible 'secteur public'", table["description"])
+        # ...and NOT mis-labelled as usage extensions ("secteur" + "public")
+        self.assertNotIn("usage", table["description"])
+        self.assertNotIn("(secteur", table["title"])
+
+    def test_hyphenated_cible_combined_with_usage(self):
+        # GIVEN a hyphenated cible plus a usage extension
+        table = SchemaBuilder.to_table_schema(
+            self.CORE,
+            schema_name="dispositif-aide-secteur-public-pilotage",
+            cible_extension={"name": "secteur-public"},
+            usage_extensions=[{"name": "pilotage"}],
+        )
+
+        # THEN cible and usage are each categorized correctly
+        self.assertEqual(
+            table["title"], "Dispositifs d'aides pour les secteur public (pilotage)"
+        )
+        self.assertIn("pour la cible 'secteur public'", table["description"])
+        self.assertIn("avec les extensions d'usage : pilotage", table["description"])
