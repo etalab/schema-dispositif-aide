@@ -6,23 +6,23 @@
   "resources": [
     {
       "name": "dispositif-aide",
-      "path": "build/exemples/par_schema/exemple-dispositif-aide.csv",
+      "path": "build/dispositif-aide/exemple.csv",
       "profile": "tabular-data-resource",
       "format": "csv",
       "mediatype": "text/csv",
       "encoding": "utf-8",
-      "schema": "build/schemas/dispositif-aide.json",
-      "documentation": "README.md"
+      "schema": "build/dispositif-aide/schema.json",
+      "documentation": "build/dispositif-aide/README.md"
     },
     {
       "name": "dispositif-aide-professionnels",
-      "path": "build/exemples/par_schema/exemple-dispositif-aide-professionnels.csv",
+      "path": "build/dispositif-aide-professionnels/exemple.csv",
       "profile": "tabular-data-resource",
       "format": "csv",
       "mediatype": "text/csv",
       "encoding": "utf-8",
-      "schema": "build/schemas/dispositif-aide-professionnels.json",
-      "documentation": "README.md"
+      "schema": "build/dispositif-aide-professionnels/schema.json",
+      "documentation": "build/dispositif-aide-professionnels/README.md"
     }
   ]
 }

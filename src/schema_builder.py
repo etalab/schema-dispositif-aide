@@ -1,6 +1,7 @@
 """Main schema builder orchestrator."""
 
 import copy
+import shutil
 from itertools import combinations, chain
 from pathlib import Path
 
@@ -9,6 +10,7 @@ from models import BuildResult, SchemaEntry
 from schema_repository import SchemaRepository
 from schema_merger import SchemaMerger
 from schema_example_generator import ExampleGenerator
+from schema_readme_generator import ReadmeGenerator
 
 
 class SchemaBuilder:
@@ -18,7 +20,8 @@ class SchemaBuilder:
         self.repo_root = repo_root
         self.repository = SchemaRepository(self.repo_root)
         self.example_gen = ExampleGenerator(self.repo_root)
-        self.build_dir = self.repo_root / constants.BUILD_SCHEMAS
+        self.readme_gen = ReadmeGenerator(self.repo_root)
+        self.build_dir = self.repo_root / constants.BUILD_DIR
 
     def build_all_schemas(self) -> BuildResult:
         """Build all schema combinations."""
@@ -40,24 +43,31 @@ class SchemaBuilder:
 
         # Clean build directory
         self.build_dir.mkdir(parents=True, exist_ok=True)
-        for json_file in self.build_dir.glob("*.json"):
-            json_file.unlink()
+        for child in self.build_dir.iterdir():
+            if child.name.startswith("."):
+                continue
+            if child.is_dir():
+                shutil.rmtree(child)
+            else:
+                child.unlink()
 
         # Generate schemas
         conflicts: list = []
         warnings: list = []
         schemas_for_csv: list[SchemaEntry] = []
         generated_schemas: dict = {}
-        known_cibles = list(cible_extensions.keys())
 
         # 1. Core only
         core_name = self.generate_schema_name()
         core_schema_copy = copy.deepcopy(core_schema)
         table_schema = SchemaBuilder.to_table_schema(
-            core_schema_copy, schema_name=core_name, known_cibles=known_cibles
+            core_schema_copy, schema_name=core_name
         )
-        SchemaRepository.save_schema(table_schema, self.build_dir / f"{core_name}.json")
-        print(f"✓ {core_name}.json")
+        SchemaRepository.save_schema(
+            table_schema, self.repo_root / constants.schema_json_path(core_name)
+        )
+        self.readme_gen.generate(core_name, table_schema, [])
+        print(f"✓ {core_name}/")
         core_field_names = [
             field["name"] for field in core_schema_copy.get("fields", [])
         ]
@@ -76,13 +86,13 @@ class SchemaBuilder:
             self._build_and_save(
                 schema_name,
                 merged_schema,
-                known_cibles,
                 conflicts,
                 warnings,
                 schemas_for_csv,
                 generated_schemas,
                 c_conflicts,
                 c_warnings,
+                usage_extensions=selected_usage,
             )
 
         # 3. Each cible × all usage combinations
@@ -105,13 +115,14 @@ class SchemaBuilder:
                 self._build_and_save(
                     schema_name,
                     merged_schema,
-                    known_cibles,
                     conflicts,
                     warnings,
                     schemas_for_csv,
                     generated_schemas,
                     c_conflicts,
                     c_warnings,
+                    usage_extensions=selected_usage,
+                    cible_extension=cible_extension,
                 )
 
         generated_count = len(schemas_for_csv)
@@ -164,7 +175,11 @@ class SchemaBuilder:
 
     @staticmethod
     def to_table_schema(
-        merged_schema: dict, schema_name: str = None, known_cibles: list[str] = None
+        merged_schema: dict,
+        schema_name: str = None,
+        *,
+        cible_extension: dict = None,
+        usage_extensions: list[dict] = None,
     ) -> dict:
         """
         Adjust a merged schema into a final table schema.
@@ -172,74 +187,83 @@ class SchemaBuilder:
         The input is already a valid table schema (deep copy of core with merged fields).
         This method only overrides the fields that needs to be reedited per generated schema:
         - name, title, description, resources, path
+
+        Title and description are derived from the actual cible/usage extension
+        objects rather than by re-parsing the schema name, so they stay correct
+        even when an extension name contains a hyphen (e.g. "secteur-public").
         """
         name = schema_name or constants.BASE_NAME
         title = constants.BASE_TITLE
         description = merged_schema.get("description", "")
 
-        if schema_name and schema_name != constants.BASE_NAME:
-            parts = schema_name.replace(f"{constants.BASE_NAME}-", "").split("-")
-            cible_part = None
-            usage_parts = []
+        usage_labels = [u["name"].replace("-", " ") for u in (usage_extensions or [])]
+        cible_label = (
+            cible_extension["name"].replace("-", " ") if cible_extension else None
+        )
 
-            if parts and known_cibles and parts[0] in known_cibles:
-                cible_part = parts[0]
-                usage_parts = parts[1:]
-            else:
-                usage_parts = parts
-
+        if cible_label or usage_labels:
             title_parts = [constants.BASE_TITLE]
-            if cible_part:
-                title_parts.append(f"pour les {cible_part}")
-            if usage_parts:
-                title_parts.append(f"({', '.join(usage_parts)})")
+            if cible_label:
+                title_parts.append(f"pour les {cible_label}")
+            if usage_labels:
+                title_parts.append(f"({', '.join(usage_labels)})")
             title = " ".join(title_parts)
 
-            if cible_part or usage_parts:
-                description_parts = [f"Extension du schéma {constants.BASE_NAME}"]
-                if cible_part:
-                    description_parts.append(f"pour la cible '{cible_part}'")
-                if usage_parts:
-                    description_parts.append(
-                        f"avec les extensions d'usage : {', '.join(usage_parts)}"
-                    )
-                description = " ".join(description_parts)
+            description_parts = [f"Extension du schéma {constants.BASE_NAME}"]
+            if cible_label:
+                description_parts.append(f"pour la cible '{cible_label}'")
+            if usage_labels:
+                description_parts.append(
+                    f"avec les extensions d'usage : {', '.join(usage_labels)}"
+                )
+            description = " ".join(description_parts)
 
         table_schema = copy.deepcopy(merged_schema)
         table_schema["name"] = name
         table_schema["title"] = title
         table_schema["description"] = description
+        # The repo URL and pinned version live only in the core schema's `path`
+        # (e.g. ".../raw/v0.2.0/build/dispositif-aide/schema.json"). Strip the
+        # trailing "<name>/schema.json" to recover the build/ directory URL, then
+        # re-target it per schema.
+        build_base_url = merged_schema.get("path", "").rsplit("/", 2)[0]
+        schema_dir_url = f"{build_base_url}/{name}"
         table_schema["resources"] = [
             {
                 "title": constants.RESOURCE_CSV_LABEL,
-                "name": constants.schema_resource_name(name),
-                "path": constants.schema_resource_csv_path(name),
+                "name": constants.schema_resource_name(),
+                "path": f"{schema_dir_url}/{constants.EXEMPLE_FILENAME}",
             }
         ]
-        base_url = merged_schema.get("path", "").rsplit("/", 1)[0]
-        table_schema["path"] = f"{base_url}/{name}.json"
+        table_schema["path"] = f"{schema_dir_url}/{constants.SCHEMA_FILENAME}"
         return table_schema
 
     def _build_and_save(
         self,
         schema_name: str,
         merged_schema: dict,
-        known_cibles: list[str],
         conflicts: list,
         warnings: list,
         schemas_for_csv: list[SchemaEntry],
         generated_schemas: dict,
         combination_conflicts: list,
         combination_warnings: list,
+        usage_extensions: list[dict] = None,
+        cible_extension: dict = None,
     ) -> None:
         """Save one schema combination and accumulate results."""
         table_schema = SchemaBuilder.to_table_schema(
-            merged_schema, schema_name=schema_name, known_cibles=known_cibles
+            merged_schema,
+            schema_name=schema_name,
+            cible_extension=cible_extension,
+            usage_extensions=usage_extensions,
         )
         SchemaRepository.save_schema(
-            table_schema, self.build_dir / f"{schema_name}.json"
+            table_schema, self.repo_root / constants.schema_json_path(schema_name)
         )
-        print(f"✓ {schema_name}.json")
+        extensions = [*(usage_extensions or []), *([cible_extension] if cible_extension else [])]
+        self.readme_gen.generate(schema_name, table_schema, extensions)
+        print(f"✓ {schema_name}/")
 
         field_names = [field["name"] for field in merged_schema.get("fields", [])]
         schemas_for_csv.append((schema_name, field_names))
@@ -263,13 +287,13 @@ class SchemaBuilder:
         resources = [
             {
                 "name": schema_name,
-                "path": constants.datapackage_csv_path(schema_name),
+                "path": constants.exemple_path(schema_name).as_posix(),
                 "profile": "tabular-data-resource",
                 "format": "csv",
                 "mediatype": "text/csv",
                 "encoding": "utf-8",
-                "schema": (constants.BUILD_SCHEMAS / f"{schema_name}.json").as_posix(),
-                "documentation": constants.DOCUMENTATION,
+                "schema": constants.schema_json_path(schema_name).as_posix(),
+                "documentation": constants.readme_path(schema_name).as_posix(),
             }
             for schema_name, _ in schemas_for_csv
         ]

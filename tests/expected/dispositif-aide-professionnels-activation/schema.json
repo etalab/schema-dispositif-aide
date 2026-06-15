@@ -1,15 +1,15 @@
 {
   "$schema": "https://specs.frictionlessdata.io/schemas/table-schema.json",
-  "name": "dispositif-aide",
-  "title": "Dispositifs d'aides",
-  "description": "Spécification du fichier d'échange relatif aux dispositifs d'aides.",
+  "name": "dispositif-aide-professionnels-activation",
+  "title": "Dispositifs d'aides pour les professionnels (activation)",
+  "description": "Extension du schéma dispositif-aide pour la cible 'professionnels' avec les extensions d'usage : activation",
   "keywords": [
     "dispositifs",
     "aide"
   ],
   "countryCode": "FR",
   "homepage": "https://github.com/etalab/schema-dispositif-aide",
-  "path": "https://github.com/etalab/schema-dispositif-aide/raw/v0.2.0/build/dispositif-aide/schema.json",
+  "path": "https://github.com/etalab/schema-dispositif-aide/raw/v0.2.0/build/dispositif-aide-professionnels-activation/schema.json",
   "licenses": [
     {
       "title": "Etalab Licence Ouverte 2.0",
@@ -19,9 +19,9 @@
   ],
   "resources": [
     {
-      "title": "Fichier valide (CSV)",
-      "name": "exemple-valide-csv",
-      "path": "https://github.com/etalab/schema-dispositif-aide/raw/v0.2.0/exemple-valide.csv"
+      "title": "Fichier de validation (CSV)",
+      "name": "exemple-csv",
+      "path": "https://github.com/etalab/schema-dispositif-aide/raw/v0.2.0/build/dispositif-aide-professionnels-activation/exemple.csv"
     }
   ],
   "sources": [],
@@ -162,7 +162,7 @@
     },
     {
       "name": "eligibilite_geographique_exclusions",
-      "title": "Couverture géographique de l’aide - Exclusions",
+      "title": "Couverture géographique de l’aide - exclusions",
       "description": "Aires géographique exclues du dispositif. Cette propriété a précédence sur les \"eligibilite_geographique\" s'il y a recouvrement. Champ à écrire en utilisant le formalisme du Code Officiel Géographique : https: //www.insee.fr/fr/information/5230987. Séparer chaque code COG par des pipes.",
       "example": "REG-84|DEP-01|COM-83141",
       "type": "string",
@@ -193,6 +193,135 @@
       "constraints": {
         "required": true
       }
+    },
+    {
+      "name": "objectif1",
+      "title": "Objectif 1",
+      "description": "Premier objectif du dispositif",
+      "example": "Réduire les émissions de CO2",
+      "type": "string"
+    },
+    {
+      "name": "lien1",
+      "title": "Lien 1",
+      "description": "URL associée au premier objectif",
+      "example": "https://exemple.gouv.fr/objectif1",
+      "type": "string",
+      "format": "uri"
+    },
+    {
+      "name": "texte_lien1",
+      "title": "Texte du lien 1",
+      "description": "Texte descriptif du premier lien",
+      "example": "En savoir plus sur l'objectif 1",
+      "type": "string"
+    },
+    {
+      "name": "objectif2",
+      "title": "Objectif 2",
+      "description": "Deuxième objectif du dispositif",
+      "example": "Améliorer l'efficacité énergétique",
+      "type": "string"
+    },
+    {
+      "name": "lien2",
+      "title": "Lien 2",
+      "description": "URL associée au deuxième objectif",
+      "example": "https://exemple.gouv.fr/objectif2",
+      "type": "string",
+      "format": "uri"
+    },
+    {
+      "name": "texte_lien2",
+      "title": "Texte du lien 2",
+      "description": "Texte descriptif du deuxième lien",
+      "example": "En savoir plus sur l'objectif 2",
+      "type": "string"
+    },
+    {
+      "name": "objectif3",
+      "title": "Objectif 3",
+      "description": "Troisième objectif du dispositif",
+      "example": "Promouvoir les énergies renouvelables",
+      "type": "string"
+    },
+    {
+      "name": "lien3",
+      "title": "Lien 3",
+      "description": "URL associée au troisième objectif",
+      "example": "https://exemple.gouv.fr/objectif3",
+      "type": "string",
+      "format": "uri"
+    },
+    {
+      "name": "texte_lien3",
+      "title": "Texte du lien 3",
+      "description": "Texte descriptif du troisième lien",
+      "example": "En savoir plus sur l'objectif 3",
+      "type": "string"
+    },
+    {
+      "name": "taille_entreprise",
+      "title": "Taille d'entreprise acceptée",
+      "description": "Taille d'entreprise acceptable (TPE, PME, ETI, GE)",
+      "example": "tpe|pme|eti|ge",
+      "type": "string"
+    },
+    {
+      "name": "effectifs_minimum",
+      "title": "Nombre d'effectifs minimum",
+      "description": "Nombre d'employés minimum requis",
+      "example": "0",
+      "type": "integer"
+    },
+    {
+      "name": "effectifs_maximum",
+      "title": "Nombre d'effectifs maximum",
+      "description": "Nombre d'employés maximum autorisé",
+      "example": "250",
+      "type": "integer"
+    },
+    {
+      "name": "secteurs_activite",
+      "title": "Secteurs d'activité acceptés",
+      "description": "Codes NAF ou libellés des secteurs acceptés",
+      "example": "70.10Z|71.11Z",
+      "type": "string"
+    },
+    {
+      "name": "chiffre_affaires_minimum",
+      "title": "Chiffre d'affaires minimum",
+      "description": "Chiffre d'affaires minimum requis en euros",
+      "example": "100000",
+      "type": "number"
+    },
+    {
+      "name": "chiffre_affaires_maximum",
+      "title": "Chiffre d'affaires maximum",
+      "description": "Chiffre d'affaires maximum autorisé en euros",
+      "example": "50000000",
+      "type": "number"
+    },
+    {
+      "name": "statut_juridique",
+      "title": "Statuts juridiques acceptés",
+      "description": "Formes juridiques pouvant candidater",
+      "example": "sarl|sas|sa|eirl|auto_entrepreneur",
+      "type": "string"
+    },
+    {
+      "name": "secteur_public_exclusion",
+      "title": "Exclusion secteur public",
+      "description": "Les entreprises publiques peuvent-elles candidater?",
+      "example": "oui|non",
+      "type": "string"
+    },
+    {
+      "name": "anciennete_minimum_mois",
+      "title": "Ancienneté minimum (mois)",
+      "description": "Nombre de mois minimum d'existence requis",
+      "example": "24",
+      "type": "integer"
     }
   ]
 }

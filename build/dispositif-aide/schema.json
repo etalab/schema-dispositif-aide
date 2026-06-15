@@ -19,9 +19,9 @@
   ],
   "resources": [
     {
-      "title": "Fichier valide (CSV)",
-      "name": "exemple-valide-csv",
-      "path": "https://github.com/etalab/schema-dispositif-aide/raw/v0.2.0/exemple-valide.csv"
+      "title": "Fichier de validation (CSV)",
+      "name": "exemple-csv",
+      "path": "https://github.com/etalab/schema-dispositif-aide/raw/v0.2.0/build/dispositif-aide/exemple.csv"
     }
   ],
   "sources": [],

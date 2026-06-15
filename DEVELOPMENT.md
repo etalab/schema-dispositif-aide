@@ -135,13 +135,13 @@ Handle priority fields to allow overriding some fields. (Identified use case: ma
 
 ```bash
 # Validate a specific schema
-frictionless validate build/schemas/dispositif-aide-pilotage.json
+frictionless validate build/dispositif-aide-pilotage/schema.json
 
 # Validate data against a schema
-frictionless validate data.csv --schema build/schemas/dispositif-aide.json
+frictionless validate data.csv --schema build/dispositif-aide/schema.json
 
 # Validate all schemas
-python3 scripts/validate_schemas.py
+python3 src/validate_schemas.py
 ```
 
 When working on the code, the evolutions should be tested with 
