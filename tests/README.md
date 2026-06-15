@@ -1,10 +1,7 @@
-# Dispositifs d'aides
+# Schéma des dispositifs d'aides (fixture de test)
 
-Spécification du fichier d'échange relatif aux dispositifs d'aides.
-
-## Composition
-
-Ce schéma correspond au socle commun « Dispositifs d'aides », sans extension.
+README racine factice utilisé par les tests pour exercer la copie des sections
+partagées dans les README de chaque schéma.
 
 ## Contexte
 

@@ -11,6 +11,12 @@ SCHEMA_EXTENSIONS = SCHEMA_DIR / "extensions"
 BUILD_DIR = Path("build")
 DATAPACKAGE = Path("datapackage.json")
 
+# --- shared documentation (root README) ---
+MAIN_README = Path("README.md")
+# Sections of the root README copied verbatim into every per-schema README so
+# each schema page carries the shared context/finality/management inline.
+SHARED_README_SECTIONS = ("Contexte", "Finalité", "Gestion du schéma")
+
 # --- per-schema filenames (inside build/<name>/) ---
 SCHEMA_FILENAME = "schema.json"
 EXEMPLE_FILENAME = "exemple.csv"

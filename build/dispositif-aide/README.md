@@ -6,29 +6,26 @@ Spécification du fichier d'échange relatif aux dispositifs d'aides.
 
 Ce schéma correspond au socle commun « Dispositifs d'aides », sans extension.
 
-> 📖 **À propos** — Ce schéma fait partie d'un ensemble de schémas décrivant les dispositifs d'aides selon leur cible et pour différents usages. Pour le contexte et la finalité de l'ensemble, consultez la documentation principale.
+## Contexte
 
-## Champs (15)
+Les dispositifs d'aides publiques peuvent prendre plusieurs formes (appels à projets, appels à manifestations d’intérêt, appels à communs, appels à candidatures...). Ils sont destinés à des acteurs multiples : des collectivités, des entreprises, des associations, des organismes de recherche, etc qui désirent bénéficier d'aides financières (subvention, dotation, prêt, avance remboursable, prise de participation...) ou d'aides en ingénierie (pour réaliser/financer des études, accompagner un projet, ou le valoriser a posteriori).
 
-| Champ | Libellé | Type | Obligatoire |
-| --- | --- | --- | --- |
-| `id` | Identifiant | string | Oui |
-| `titre` | Titre | string | Oui |
-| `promesse` | Promesse | string | Non |
-| `description` | Description | string | Oui |
-| `eligibilite` | Critères d’éligibilité | string | Oui |
-| `types_aides` | Types d'aides | string | Oui |
-| `porteurs` | Porteurs | string | Oui |
-| `programmes_parents` | Programmes parents et régime d'aides | string | Non |
-| `url_source` | URL Source | string | Non |
-| `cibles` | Bénéficiaires | string | Oui |
-| `eligibilite_geographique` | Couverture géographique de l’aide | string | Oui |
-| `eligibilite_geographique_exclusions` | Couverture géographique de l’aide - Exclusions | string | Non |
-| `date_ouverture` | Date d’ouverture | datetime | Non |
-| `date_cloture` | Date de fin | datetime | Non |
-| `date_mise_a_jour` | Date de dernière mise à jour | datetime | Oui |
+Ces dispositifs sont nombreux et sont créés par des entités publiques de portée locale ou nationale, induisant de la complexité pour les bénéficiaires potentiels de ces dispositifs : *comment s'assurer de la pertinence d'un dispositif ? Comment "comparer" des dispositifs entre eux ?*. 
 
-## Ressources
+Pour les acteurs publics à l'origine de ces dispositifs, il y a également un enjeu de positionnement et de lisibilité : *Quelle complémentarité avec les dispositifs existants ? Comment rédiger mon dispositif pour le rendre compréhensible pour ses bénéficiaires potentiels ?*
 
-- Schéma : [`schema.json`](schema.json)
-- Exemple valide : [`exemple.csv`](exemple.csv)
+## Finalité
+
+Afin de faciliter la connaissance et l'échange de données relatives à ces dispositifs entre les services numériques publics, et améliorer le service rendu aux bénéficiaires, ce schéma de données a été créé, agrégeant la connaissance sur de nombreux dispositifs publics.
+
+Les acteurs publics, créateurs de dispositifs, verront ainsi leurs dispositifs relayés dans d'autres services comme mission-transition-ecologique.beta.gouv.fr afin de toucher un plus grand nombre de bénéficiaires.
+
+L'utilisation d'un schéma de données partagé est également utile pour faciliter l'articulation entre dispositifs, et offrir une meilleure lisibilité aux bénéficiaires.
+
+Enfin, il pourrait être pertinent de faire un lien entre un dispositif d'aide et les [subventions associées](https://schema.data.gouv.fr/scdl/subventions/) afin de connaitre les montants versés par ses dispositifs dans un usage de pilotage administratif ou d'évaluation de politique publique.
+
+## Gestion du schéma
+
+La gestion du schéma est centralisée sur [ce fichier grist](https://grist.numerique.gouv.fr/o/docs/uC2J5niqzb48/Gestion-des-schemas-des-dispositifs-daide).
+Ce fichier est librement accessible en lecture. Vous y trouverez notamment les listes de valeurs autorisées pour les champs sur lesquels des contraintes ont été imposées. 
+Vous y trouverez également un lien vers un channel de discussion si vous souhaitez participer au développement de ce schéma.
